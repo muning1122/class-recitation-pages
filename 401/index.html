@@ -1825,6 +1825,19 @@
     ];
 
     const STORAGE_KEY = "class401_math_recitation_v1";
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyC9WfHCO-Ni3Y55Q5Fttw8SdGWl_GvNzns",
+      authDomain: "recitation-sync.firebaseapp.com",
+      databaseURL: "https://recitation-sync-default-rtdb.firebaseio.com",
+      projectId: "recitation-sync",
+      storageBucket: "recitation-sync.firebasestorage.app",
+      messagingSenderId: "396095791591",
+      appId: "1:396095791591:web:88ee7e0bc8909a37ca9d42"
+    };
+    const CLOUD_SYNC = {
+      classId: "401",
+      firebaseConfig: window.RECITATION_FIREBASE_CONFIG || FIREBASE_CONFIG
+    };
     const state = {
       records: {},
       activeView: "overview",
@@ -1843,7 +1856,13 @@
       timerEndAt: null,
       timerTick: null,
       savedAt: null,
-      soundOn: true
+      soundOn: true,
+      syncState: "local",
+      syncMessage: "本机保存",
+      syncingFromCloud: false,
+      cloudSaveTimer: null,
+      cloudApi: null,
+      remoteLoaded: false
     };
 
     const labelMap = {
@@ -1965,6 +1984,111 @@
       setStatus(studentId, itemId, next);
     }
 
+    function cloudPayload() {
+      return {
+        classId: CLOUD_SYNC.classId,
+        records: state.records,
+        customItems: state.customItems,
+        savedAt: state.savedAt || new Date().toISOString(),
+        syncVersion: 1
+      };
+    }
+
+    function persistLocal() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        records: state.records,
+        customItems: state.customItems,
+        savedAt: state.savedAt,
+        soundOn: state.soundOn
+      }));
+    }
+
+    function applyCloudPayload(data) {
+      if (!data || typeof data !== "object") return false;
+      state.records = data.records || {};
+      state.customItems = normalizeCustomItems(data.customItems);
+      applyCustomItems();
+      state.savedAt = data.savedAt || new Date().toISOString();
+      persistLocal();
+      renderModuleOptions();
+      render();
+      return true;
+    }
+
+    function setSyncMessage(syncState, message) {
+      state.syncState = syncState;
+      state.syncMessage = message;
+      const el = document.getElementById("lastSave");
+      if (el) renderStats();
+    }
+
+    function isRemoteNewer(remote) {
+      const remoteTime = Date.parse(remote?.savedAt || "");
+      const localTime = Date.parse(state.savedAt || "");
+      return Number.isFinite(remoteTime) && (!Number.isFinite(localTime) || remoteTime > localTime);
+    }
+
+    function scheduleCloudSave() {
+      if (!state.cloudApi || state.syncingFromCloud) return;
+      clearTimeout(state.cloudSaveTimer);
+      setSyncMessage("saving", "云端同步中");
+      state.cloudSaveTimer = setTimeout(pushCloudNow, 900);
+    }
+
+    async function pushCloudNow() {
+      if (!state.cloudApi) return;
+      try {
+        await state.cloudApi.set(state.cloudApi.ref, cloudPayload());
+        setSyncMessage("online", "云端已同步");
+      } catch (error) {
+        console.warn("cloud sync failed", error);
+        setSyncMessage("offline", "云端同步失败，已保存在本机");
+      }
+    }
+
+    async function initCloudSync() {
+      if (!CLOUD_SYNC.firebaseConfig || !CLOUD_SYNC.firebaseConfig.databaseURL) {
+        setSyncMessage("local", "本机保存，云同步待配置");
+        return;
+      }
+      try {
+        setSyncMessage("connecting", "正在连接云端");
+        const [appMod, dbMod, authMod] = await Promise.all([
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"),
+          import("https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js")
+        ]);
+        const app = appMod.initializeApp(CLOUD_SYNC.firebaseConfig, `recitation-${CLOUD_SYNC.classId}`);
+        const auth = authMod.getAuth(app);
+        await authMod.signInAnonymously(auth);
+        const db = dbMod.getDatabase(app);
+        const dataRef = dbMod.ref(db, `recitation/${CLOUD_SYNC.classId}/state`);
+        state.cloudApi = { set: dbMod.set, ref: dataRef };
+        dbMod.onValue(dataRef, snapshot => {
+          const remote = snapshot.val();
+          if (!remote) {
+            if (state.savedAt) scheduleCloudSave();
+            return;
+          }
+          state.remoteLoaded = true;
+          if (isRemoteNewer(remote)) {
+            state.syncingFromCloud = true;
+            applyCloudPayload(remote);
+            state.syncingFromCloud = false;
+            setSyncMessage("online", "已拉取云端最新记录");
+          } else {
+            setSyncMessage("online", "云端已连接");
+          }
+        }, error => {
+          console.warn("cloud read failed", error);
+          setSyncMessage("offline", "云端读取失败，本机继续可用");
+        });
+      } catch (error) {
+        console.warn("cloud init failed", error);
+        setSyncMessage("offline", "云端连接失败，本机继续可用");
+      }
+    }
+
     function load() {
       try {
         if (location.hash.startsWith("#state=")) {
@@ -1974,7 +2098,7 @@
           state.customItems = normalizeCustomItems(decoded.customItems);
           applyCustomItems();
           state.savedAt = decoded.savedAt || new Date().toISOString();
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ records: state.records, customItems: state.customItems, savedAt: state.savedAt, soundOn: state.soundOn }));
+          persistLocal();
           history.replaceState(null, "", location.pathname);
           return;
         }
@@ -1995,7 +2119,8 @@
 
     function save() {
       state.savedAt = new Date().toISOString();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ records: state.records, customItems: state.customItems, savedAt: state.savedAt, soundOn: state.soundOn }));
+      persistLocal();
+      scheduleCloudSave();
     }
 
     function snapshotProgress(studentId, itemId) {
@@ -2169,7 +2294,8 @@
       document.getElementById("screenPercent").textContent = `${s.percent}%`;
       document.getElementById("screenLine").textContent = s.recheck ? `还有 ${s.recheck} 个待复查记录` : `还有 ${s.unfinished} 个项目等待推进`;
       document.getElementById("screenNeed").textContent = `未完成 ${s.unfinished}`;
-      document.getElementById("lastSave").textContent = state.savedAt ? `已保存：${new Date(state.savedAt).toLocaleString("zh-CN")}` : "还没有登记记录";
+      const savedText = state.savedAt ? `已保存：${new Date(state.savedAt).toLocaleString("zh-CN")}` : "还没有登记记录";
+      document.getElementById("lastSave").textContent = `${savedText} · ${state.syncMessage}`;
     }
 
     function renderModuleOptions() {
@@ -3200,6 +3326,7 @@
     bindEvents();
     renderTimer();
     render();
+    initCloudSync();
   </script>
 </body>
 </html>
