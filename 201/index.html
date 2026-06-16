@@ -2108,6 +2108,27 @@
       return { ref: null, set, get, mode: "rest" };
     }
 
+    function createPublicCloudApi() {
+      const config = CLOUD_SYNC.firebaseConfig;
+      const url = `${config.databaseURL}/${cloudStatePath()}.json`;
+      return {
+        ref: null,
+        mode: "public-rest",
+        async get() {
+          const response = await fetch(url, { method: "GET" });
+          return readResponseJson(response);
+        },
+        async set(_ref, payload) {
+          const response = await fetch(url, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          return readResponseJson(response);
+        }
+      };
+    }
+
     function applyRemotePayload(remote, connectedMessage) {
       if (!remote) {
         if (state.savedAt) scheduleCloudSave();
@@ -2145,6 +2166,23 @@
       }, 15000);
     }
 
+    async function initPublicCloudSync() {
+      const api = createPublicCloudApi();
+      const remote = await api.get();
+      state.cloudApi = api;
+      applyRemotePayload(remote, "云端已连接");
+      clearInterval(state.cloudPollTimer);
+      state.cloudPollTimer = setInterval(async () => {
+        if (state.syncingFromCloud || !state.cloudApi?.get) return;
+        try {
+          applyRemotePayload(await state.cloudApi.get(), "云端已连接");
+        } catch (error) {
+          console.warn("public cloud read failed", error);
+          setSyncMessage("offline", "云端读取失败，本机继续可用");
+        }
+      }, 15000);
+    }
+
     function scheduleCloudSave() {
       if (!state.cloudApi || state.syncingFromCloud) return;
       clearTimeout(state.cloudSaveTimer);
@@ -2170,6 +2208,12 @@
       }
       try {
         setSyncMessage("connecting", "正在连接云端");
+        try {
+          await initPublicCloudSync();
+          return;
+        } catch (publicError) {
+          console.warn("public cloud init failed", publicError);
+        }
         const [appMod, dbMod, authMod] = await Promise.all([
           import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
           import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"),
