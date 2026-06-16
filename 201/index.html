@@ -943,6 +943,69 @@
       line-height: 1.55;
     }
 
+    .recite-layout {
+      display: grid;
+      gap: 14px;
+    }
+
+    .recite-module {
+      padding: 14px;
+      border: 1px solid rgba(29, 38, 51, .12);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.78);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .recite-module h3 {
+      margin: 0 0 12px;
+      font-size: clamp(22px, 2.2vw, 34px);
+      color: #0f172a;
+    }
+
+    .recite-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .recite-card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(37, 99, 235, .14);
+      background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(239,246,255,.92)), white;
+    }
+
+    .recite-id {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      box-shadow: 0 12px 26px rgba(37,99,235,.22);
+    }
+
+    .recite-title {
+      margin: 0 0 7px;
+      font-size: clamp(20px, 2vw, 30px);
+      line-height: 1.25;
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .recite-content {
+      margin: 0;
+      font-size: clamp(18px, 1.7vw, 26px);
+      line-height: 1.62;
+      color: #334155;
+      font-weight: 700;
+    }
+
     .need-list {
       max-height: 88px;
       overflow: auto;
@@ -1357,7 +1420,7 @@
       right: 10px;
       bottom: 10px;
       z-index: 12;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 6px;
       padding: 8px;
       border-radius: 8px;
@@ -1512,7 +1575,7 @@
       .status-board { grid-template-columns: 1fr; }
       .tabs {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
       }
       .tab {
         padding: 0 6px;
@@ -1605,6 +1668,7 @@
         <button class="tab" data-view="register">登记台</button>
         <button class="tab" data-view="alerts">提醒台</button>
         <button class="tab" data-view="items">知识点</button>
+        <button class="tab" data-view="recite">背诵清单</button>
         <button class="tab" data-view="screen">大屏展示</button>
       </div>
       <div class="search">
@@ -1699,6 +1763,21 @@
           </div>
           <div class="panel-body">
             <div class="item-grid" id="itemGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="reciteView">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>背诵内容清单</h2>
+              <p class="hint">这 27 个知识点是二年级下册期末背诵范围，按单元整理，适合课堂投屏带读和检查。</p>
+            </div>
+            <span class="chip good">27 个知识点</span>
+          </div>
+          <div class="panel-body">
+            <div class="recite-layout" id="reciteList"></div>
           </div>
         </div>
       </section>
@@ -1802,6 +1881,7 @@
     <button class="btn dark" data-mobile-view="overview">看板</button>
     <button class="btn" data-mobile-view="register">登记</button>
     <button class="btn" data-mobile-view="items">知识</button>
+    <button class="btn" data-mobile-view="recite">清单</button>
     <button class="btn primary" id="mobileDraw">抽查</button>
     <button class="btn good" id="mobileReviewDraw">回抽</button>
   </div>
@@ -2623,6 +2703,28 @@
               ${st.missing.length > 18 ? `<span class="chip">另 ${st.missing.length - 18} 人</span>` : ""}
             </div>
           </article>
+        `;
+      }).join("");
+    }
+
+    function renderReciteList() {
+      const baseItems = ITEMS.slice(0, BASE_ITEM_COUNT);
+      const modules = [...new Set(baseItems.map(item => item.module))];
+      document.getElementById("reciteList").innerHTML = modules.map(module => {
+        const rows = baseItems.filter(item => item.module === module).map(item => `
+          <article class="recite-card">
+            <div class="recite-id">${item.id}</div>
+            <div>
+              <h3 class="recite-title">${item.title}</h3>
+              <p class="recite-content">${item.content}</p>
+            </div>
+          </article>
+        `).join("");
+        return `
+          <section class="recite-module">
+            <h3>${module}</h3>
+            <div class="recite-list">${rows}</div>
+          </section>
         `;
       }).join("");
     }
@@ -3469,6 +3571,7 @@
       renderStatusBoard();
       renderMatrix();
       renderItems();
+      renderReciteList();
       renderScreen();
     }
 
