@@ -1,0 +1,3195 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>201班背书计划</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --ink: #1d2633;
+      --muted: #64748b;
+      --line: rgba(29, 38, 51, 0.13);
+      --panel: rgba(255, 255, 255, 0.82);
+      --white: #ffffff;
+      --blue: #2563eb;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --violet: #7c3aed;
+      --cyan: #06b6d4;
+      --shadow: 0 18px 45px rgba(39, 54, 76, 0.13);
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { overflow-x: hidden; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 10% 12%, rgba(37, 99, 235, 0.18), transparent 28%),
+        radial-gradient(circle at 88% 10%, rgba(16, 185, 129, 0.16), transparent 24%),
+        linear-gradient(135deg, #f8f1df 0%, #eef6f1 48%, #edf3ff 100%);
+      min-height: 100vh;
+      letter-spacing: 0;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      padding: 18px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    #fxCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 55;
+    }
+
+    #ribbonCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 57;
+    }
+
+    .app::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(29, 38, 51, 0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(29, 38, 51, 0.045) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.5), transparent 80%);
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      min-height: 148px;
+      color: white;
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      background:
+        linear-gradient(120deg, rgba(12, 31, 68, 0.96), rgba(30, 98, 109, 0.94)),
+        linear-gradient(45deg, rgba(255,255,255,0.13), transparent);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand::after {
+      content: "";
+      position: absolute;
+      inset: auto -10% -42% 35%;
+      height: 170px;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.16) 0 8px, transparent 8px 18px);
+      transform: rotate(-10deg);
+      opacity: .55;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.12;
+      letter-spacing: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand p {
+      max-width: 780px;
+      margin: 12px 0 0;
+      color: rgba(255, 255, 255, .82);
+      font-size: 15px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sync-card {
+      width: 320px;
+      min-height: 148px;
+      border-radius: var(--radius);
+      padding: 16px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.75);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .sync-card strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .sync-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .mode-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      min-height: 38px;
+      border-radius: 7px;
+      padding: 0 12px;
+      background: #e8edf5;
+      color: #253143;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      white-space: nowrap;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(37, 99, 235, .13);
+    }
+
+    .btn.primary { background: var(--blue); color: white; }
+    .btn.good { background: var(--green); color: white; }
+    .btn.warn { background: var(--amber); color: #221500; }
+    .btn.danger { background: var(--red); color: white; }
+    .btn.dark { background: #1f2937; color: white; }
+
+    .last-save {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(130px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat {
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.8);
+      box-shadow: 0 14px 28px rgba(30, 41, 59, .09);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .stat::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 4px;
+      background: var(--accent, var(--blue));
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .stat .sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .timer-panel {
+      display: grid;
+      grid-template-columns: minmax(260px, 1fr) auto minmax(270px, auto);
+      gap: 12px;
+      align-items: center;
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .timer-panel.compact {
+      grid-template-columns: 1fr auto;
+      cursor: pointer;
+    }
+
+    .timer-panel.compact .timer-controls {
+      display: none;
+    }
+
+    .timer-panel.compact .timer-title span {
+      display: none;
+    }
+
+    .timer-panel.running::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--blue), var(--green), var(--amber));
+      animation: timerSlide 1.2s linear infinite;
+    }
+
+    .timer-title strong {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .timer-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .timer-display {
+      min-width: 190px;
+      text-align: center;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: 0;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 12px 28px rgba(37, 99, 235, .12);
+    }
+
+    .timer-controls {
+      display: grid;
+      gap: 8px;
+    }
+
+    .timer-inputs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(70px, 1fr));
+      gap: 8px;
+    }
+
+    .timer-inputs label {
+      display: grid;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .timer-inputs input {
+      width: 100%;
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0 8px;
+      font-weight: 800;
+      text-align: center;
+      color: var(--ink);
+      background: white;
+    }
+
+    .timer-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .timer-presets {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .timer-presets .btn {
+      min-height: 32px;
+      font-size: 13px;
+    }
+
+    @keyframes timerSlide {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(100%); }
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(255, 255, 255, .82);
+      padding: 10px;
+      box-shadow: 0 12px 30px rgba(30, 41, 59, .08);
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      backdrop-filter: blur(18px);
+    }
+
+    .tabs, .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      height: 36px;
+      padding: 0 14px;
+      border-radius: 7px;
+      background: transparent;
+      color: #344154;
+    }
+
+    .tab.active {
+      background: #1f2937;
+      color: white;
+    }
+
+    .search {
+      display: grid;
+      grid-template-columns: minmax(82px, 120px) minmax(130px, 180px) minmax(130px, 180px) minmax(110px, 150px);
+      gap: 8px;
+    }
+
+    .search input, .search select {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 0 12px;
+      background: white;
+      color: var(--ink);
+      min-width: 0;
+    }
+
+    .main {
+      margin-top: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) 1fr;
+      gap: 12px;
+    }
+
+    .panel {
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,.84);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-head {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.52);
+    }
+
+    .panel-head h2 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .panel-body {
+      padding: 14px;
+    }
+
+    .progress-stage {
+      display: grid;
+      place-items: center;
+      min-height: 292px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.82), rgba(236, 250, 250, .68)),
+        radial-gradient(circle at center, rgba(37,99,235,.15), transparent 55%);
+    }
+
+    .ring {
+      --p: 0;
+      width: 212px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) calc(var(--p) * 1%), rgba(15, 23, 42, .08) 0);
+      display: grid;
+      place-items: center;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,.08), 0 18px 38px rgba(16,185,129,.18);
+      position: relative;
+    }
+
+    .ring::before {
+      content: "";
+      width: 158px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: linear-gradient(180deg, white, #f8fbff);
+      position: absolute;
+      box-shadow: inset 0 2px 12px rgba(15,23,42,.08);
+    }
+
+    .ring-content {
+      position: relative;
+      text-align: center;
+    }
+
+    .ring-content b {
+      display: block;
+      font-size: 42px;
+      line-height: 1;
+    }
+
+    .ring-content span {
+      display: block;
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .alert-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .alert-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 7px;
+      background: white;
+      border: 1px solid var(--line);
+      animation: alertPulse 2.4s ease-in-out infinite;
+    }
+
+    .alert-card .rank {
+      width: 34px;
+      height: 34px;
+      border-radius: 7px;
+      background: #fff4db;
+      display: grid;
+      place-items: center;
+      color: #8a5600;
+      font-weight: 800;
+    }
+
+    .alert-card strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .alert-card small {
+      color: var(--muted);
+      display: block;
+      margin-top: 3px;
+    }
+
+    @keyframes alertPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(245, 158, 11, 0); }
+      50% { box-shadow: 0 0 0 5px rgba(245, 158, 11, .13); }
+    }
+
+    .student-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    .student-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      min-height: 142px;
+      position: relative;
+      overflow: hidden;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .student-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 28px rgba(37, 99, 235, .13);
+      border-color: rgba(37, 99, 235, .35);
+    }
+
+    .student-card.done-all::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(16,185,129,.16), transparent 46%);
+      pointer-events: none;
+    }
+
+    .student-card.done-all {
+      border-color: rgba(16, 185, 129, .55);
+      animation: completeGlow 2.4s ease-in-out infinite;
+    }
+
+    .group-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 10px;
+    }
+
+    .group-card {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      position: relative;
+      overflow: hidden;
+      min-height: 184px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .group-card.featured {
+      min-height: 230px;
+      display: grid;
+      align-content: space-between;
+      background:
+        linear-gradient(140deg, rgba(255,255,255,.96), rgba(240,249,255,.9)),
+        white;
+    }
+
+    .group-card.featured .group-title {
+      font-size: 24px;
+    }
+
+    .group-card.featured .bar {
+      height: 18px;
+      background: #dce5ef;
+      box-shadow: inset 0 1px 2px rgba(15,23,42,.12);
+    }
+
+    .group-card.featured .bar i {
+      background: linear-gradient(90deg, var(--blue), var(--cyan), var(--green));
+      animation: barShine 2.2s ease-in-out infinite;
+    }
+
+    .group-percent {
+      font-size: 46px;
+      line-height: 1;
+      font-weight: 900;
+      margin: 10px 0 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .group-card.leading {
+      border-color: rgba(245,158,11,.62);
+      box-shadow: 0 24px 58px rgba(245,158,11,.18);
+    }
+
+    .group-card.leading .group-rank {
+      background: var(--amber);
+      color: #221500;
+    }
+
+    @keyframes barShine {
+      0%, 100% { filter: saturate(1); }
+      50% { filter: saturate(1.45) brightness(1.08); }
+    }
+
+    .group-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 34px rgba(37, 99, 235, .13);
+      border-color: rgba(37, 99, 235, .35);
+    }
+
+    .group-card.complete {
+      border-color: rgba(16, 185, 129, .62);
+      animation: completeGlow 2.4s ease-in-out infinite;
+    }
+
+    .group-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(37,99,235,.13), transparent 52%);
+      pointer-events: none;
+    }
+
+    .group-card.complete::before {
+      background: linear-gradient(135deg, rgba(16,185,129,.18), transparent 54%);
+    }
+
+    .group-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .group-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .group-meta, .group-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
+    .group-note {
+      min-height: 36px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .group-rank {
+      min-width: 48px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: white;
+      background: #1f2937;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .group-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .leader-section-title {
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      margin: 4px 0;
+    }
+
+    .status-board {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      background: white;
+    }
+
+    .status-row strong,
+    .status-row small {
+      display: block;
+    }
+
+    .status-row small {
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    @keyframes completeGlow {
+      0%, 100% { box-shadow: 0 16px 28px rgba(16, 185, 129, .12); }
+      50% { box-shadow: 0 18px 38px rgba(16, 185, 129, .28); }
+    }
+
+    .student-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .student-name {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .student-id {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #eef2f7;
+    }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: #e8edf3;
+      overflow: hidden;
+      margin: 14px 0 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bar i {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      transition: width .3s ease;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .chip {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #eef2f7;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    .chip.good { background: #dff8ed; color: #047857; }
+    .chip.warn { background: #fff0cf; color: #9a5b00; }
+    .chip.red { background: #ffe2e2; color: #b91c1c; }
+    .chip.violet { background: #ede9fe; color: #5b21b6; }
+
+    .matrix-wrap {
+      overflow: auto;
+      max-height: calc(100vh - 272px);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 1380px;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #e2e8f0;
+      text-align: center;
+      padding: 6px;
+      font-size: 13px;
+    }
+
+    th .col-id {
+      display: block;
+      font-weight: 900;
+    }
+
+    th .col-title {
+      display: block;
+      max-width: 86px;
+      margin-top: 3px;
+      font-size: 10px;
+      line-height: 1.2;
+      color: rgba(255,255,255,.74);
+      white-space: normal;
+    }
+
+    th {
+      background: #1f2937;
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    th.sticky, td.sticky {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      min-width: 52px;
+    }
+
+    th.name, td.name {
+      position: sticky;
+      left: 52px;
+      z-index: 3;
+      min-width: 92px;
+      text-align: left;
+    }
+
+    td.sticky, td.name { background: #fff; }
+    th.name, th.sticky { background: #111827; }
+
+    .status-btn {
+      width: 31px;
+      height: 31px;
+      border-radius: 7px;
+      font-weight: 800;
+      color: #334155;
+      background: #f1f5f9;
+      border: 1px solid #dbe3ef;
+      transition: transform .14s ease, background .14s ease;
+    }
+
+    .status-btn:hover { transform: scale(1.08); }
+    .status-btn.done { background: #dcfce7; color: #047857; border-color: #86efac; }
+    .status-btn.copy { background: #fef3c7; color: #92400e; border-color: #fbbf24; }
+    .status-btn.recheck { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+    .status-btn.pop {
+      animation: markPop .42s ease;
+    }
+
+    @keyframes markPop {
+      0% { transform: scale(.75); }
+      45% { transform: scale(1.22); }
+      100% { transform: scale(1); }
+    }
+
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+
+    .item-card {
+      border-radius: var(--radius);
+      background: white;
+      border: 1px solid var(--line);
+      padding: 12px;
+    }
+
+    .item-card h3 {
+      margin: 8px 0 8px;
+      font-size: 17px;
+      line-height: 1.25;
+    }
+
+    .item-card p {
+      color: var(--muted);
+      margin: 0 0 12px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .need-list {
+      max-height: 88px;
+      overflow: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .hint {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .stage {
+      min-height: calc(100vh - 255px);
+      display: grid;
+      grid-template-columns: 1fr 390px;
+      gap: 12px;
+    }
+
+    .screen-card {
+      border-radius: var(--radius);
+      color: white;
+      padding: 22px;
+      background:
+        linear-gradient(120deg, rgba(4, 21, 45, .98), rgba(11, 92, 107, .94)),
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.2), transparent 26%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+      min-height: 520px;
+    }
+
+    .screen-card::after {
+      content: "";
+      position: absolute;
+      top: 16%;
+      left: -20%;
+      width: 140%;
+      height: 24px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+      transform: rotate(-16deg);
+      animation: scan 5s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateY(-180px) rotate(-16deg); }
+      100% { transform: translateY(620px) rotate(-16deg); }
+    }
+
+    .screen-card h2 {
+      font-size: 42px;
+      margin: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .big-number {
+      font-size: 130px;
+      line-height: .95;
+      font-weight: 900;
+      margin-top: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .screen-sub {
+      color: rgba(255,255,255,.78);
+      font-size: 20px;
+      margin-top: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .leaderboard {
+      display: grid;
+      gap: 8px;
+    }
+
+    .leader-row {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(255,255,255,.78);
+      border-radius: 7px;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 16px;
+      top: 16px;
+      bottom: 16px;
+      width: min(560px, calc(100vw - 32px));
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(255,255,255,.85);
+      border-radius: var(--radius);
+      box-shadow: 0 24px 70px rgba(15,23,42,.28);
+      z-index: 30;
+      transform: translateX(calc(100% + 24px));
+      transition: transform .24s ease;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      overflow: hidden;
+    }
+
+    .drawer.open { transform: translateX(0); }
+
+    .drawer-head {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .drawer-head h2 { margin: 0; }
+
+    .drawer-close {
+      min-width: 82px;
+      font-weight: 900;
+    }
+
+    .drawer-body {
+      overflow: auto;
+      padding: 14px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .drawer-foot {
+      padding: 10px 14px 14px;
+      border-top: 1px solid var(--line);
+      background: rgba(248,250,252,.94);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .drawer-foot small {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .detail-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      background: white;
+    }
+
+    .detail-item strong { display: block; }
+    .detail-item small {
+      display: block;
+      color: var(--muted);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .status-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 72px);
+      gap: 6px;
+    }
+
+    .mini {
+      height: 30px;
+      border-radius: 7px;
+      font-size: 12px;
+      background: #eef2f7;
+      color: #334155;
+    }
+
+    .mini.done { background: #dcfce7; color: #047857; }
+    .mini.copy { background: #fef3c7; color: #92400e; }
+    .mini.recheck { background: #fee2e2; color: #b91c1c; }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%) translateY(120px);
+      background: #111827;
+      color: white;
+      padding: 11px 14px;
+      border-radius: 7px;
+      z-index: 60;
+      box-shadow: var(--shadow);
+      transition: transform .22s ease;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    .item-editor {
+      position: fixed;
+      inset: 0;
+      z-index: 58;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background: rgba(15,23,42,.56);
+      backdrop-filter: blur(8px);
+    }
+
+    .item-editor.show { display: grid; }
+
+    .editor-card {
+      width: min(660px, 100%);
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: 0 24px 80px rgba(0,0,0,.28);
+      overflow: hidden;
+      animation: pop .22s ease;
+    }
+
+    .editor-body {
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 6px;
+    }
+
+    .form-row label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .form-row input,
+    .form-row textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px 12px;
+      font: inherit;
+      color: var(--ink);
+      background: #f9fbff;
+    }
+
+    .form-row textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    .spotlight {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      place-items: center;
+      background: rgba(15,23,42,.62);
+      backdrop-filter: blur(8px);
+      padding: 18px;
+    }
+
+    .spotlight.show { display: grid; }
+
+    .spot-card {
+      width: min(720px, 100%);
+      background: white;
+      border-radius: var(--radius);
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0,0,0,.3);
+      animation: pop .22s ease;
+    }
+
+    .spot-actions {
+      justify-content: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .spot-next-row {
+      justify-content: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .celebration {
+      position: fixed;
+      inset: 0;
+      z-index: 58;
+      display: none;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255, 255, 255, .25), transparent 28%),
+        linear-gradient(135deg, rgba(10, 25, 47, .88), rgba(8, 91, 95, .86));
+      backdrop-filter: blur(12px);
+    }
+
+    .celebration.show {
+      display: grid;
+    }
+
+    .celebration-card {
+      width: min(880px, 100%);
+      min-height: 430px;
+      border-radius: var(--radius);
+      color: white;
+      padding: 34px;
+      text-align: center;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.06)),
+        rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: 0 36px 110px rgba(0,0,0,.34);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .celebration-card::before {
+      content: "";
+      position: absolute;
+      inset: -45%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.24), transparent, rgba(16,185,129,.3), transparent);
+      animation: rotateLight 5s linear infinite;
+    }
+
+    .celebration-card::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: inset 0 0 70px rgba(255,255,255,.08);
+      pointer-events: none;
+    }
+
+    .celebration-stamps {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .celebration-stamps span {
+      position: absolute;
+      color: rgba(255,255,255,.14);
+      font-size: clamp(44px, 8vw, 112px);
+      font-weight: 900;
+      animation: floatStamp 4.8s ease-in-out infinite;
+    }
+
+    .celebration-stamps span:nth-child(1) { left: 6%; top: 12%; transform: rotate(-12deg); }
+    .celebration-stamps span:nth-child(2) { right: 7%; top: 18%; transform: rotate(10deg); animation-delay: .7s; }
+    .celebration-stamps span:nth-child(3) { left: 28%; bottom: 5%; transform: rotate(-4deg); animation-delay: 1.3s; }
+
+    .celebration-grand {
+      background:
+        radial-gradient(circle at 16% 18%, rgba(255, 255, 255, .32), transparent 26%),
+        radial-gradient(circle at 88% 30%, rgba(245, 158, 11, .34), transparent 30%),
+        linear-gradient(135deg, rgba(7, 34, 72, .92), rgba(6, 95, 70, .88));
+    }
+
+    .celebration-module {
+      background:
+        radial-gradient(circle at 24% 16%, rgba(255, 255, 255, .28), transparent 27%),
+        linear-gradient(135deg, rgba(8, 47, 73, .9), rgba(13, 148, 136, .86));
+    }
+
+    @keyframes floatStamp {
+      0%, 100% { translate: 0 0; opacity: .55; }
+      50% { translate: 0 -16px; opacity: .95; }
+    }
+
+    @keyframes rotateLight {
+      to { transform: rotate(360deg); }
+    }
+
+    .celebration-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .celebration-title {
+      margin: 0;
+      font-size: clamp(38px, 7vw, 86px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .celebration-sub {
+      margin: 18px auto 0;
+      max-width: 680px;
+      color: rgba(255,255,255,.82);
+      font-size: clamp(18px, 2.2vw, 26px);
+      line-height: 1.5;
+    }
+
+    .mobile-quick {
+      display: none;
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 12;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 6px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 16px 40px rgba(15,23,42,.22);
+      backdrop-filter: blur(16px);
+    }
+
+    .mobile-quick .btn {
+      min-width: 0;
+      width: 100%;
+      overflow: hidden;
+      padding: 0 6px;
+      font-size: 14px;
+    }
+
+    @keyframes pop {
+      from { transform: scale(.94); opacity: .5; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .spot-name {
+      font-size: clamp(56px, 8vw, 96px);
+      line-height: 1.05;
+      font-weight: 900;
+      margin: 8px 0;
+    }
+
+    .spot-topic {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      color: #334155;
+      margin-bottom: 16px;
+    }
+
+    #spotContent {
+      font-size: 20px;
+      line-height: 1.65;
+    }
+
+    .spot-name.rolling, .spot-topic.rolling {
+      animation: rollFlash .11s linear infinite;
+    }
+
+    .spot-card.review-mode {
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, .97), rgba(239, 255, 251, .95)),
+        white;
+      border: 2px solid rgba(16, 185, 129, .35);
+    }
+
+    .spot-card.review-mode .spot-name {
+      color: #065f46;
+      text-shadow: 0 10px 26px rgba(16, 185, 129, .22);
+    }
+
+    .draw-hint {
+      min-height: 26px;
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .candidate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+      gap: 8px;
+      margin: 10px 0 16px;
+      max-height: 210px;
+      overflow: auto;
+    }
+
+    .candidate-card {
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      min-height: 78px;
+      padding: 8px 6px;
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(248,250,252,.95), rgba(239,246,255,.86));
+      border: 1px solid rgba(148,163,184,.25);
+      color: #334155;
+      transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+    }
+
+    .candidate-card.active {
+      transform: translateY(-4px) scale(1.03);
+      border-color: rgba(16,185,129,.7);
+      box-shadow: 0 12px 28px rgba(16,185,129,.22);
+    }
+
+    .candidate-avatar {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: white;
+      font-weight: 900;
+      background: linear-gradient(135deg, #2563eb, #10b981);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
+    }
+
+    .candidate-card span {
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    @keyframes rollFlash {
+      0% { transform: translateY(-2px) scale(1.015); filter: saturate(1.15); }
+      50% { transform: translateY(2px) scale(.995); filter: saturate(1.9); }
+      100% { transform: translateY(-1px) scale(1.01); filter: saturate(1.15); }
+    }
+
+    .hidden-file { display: none; }
+
+    @media (max-width: 1020px) {
+      .topbar, .dashboard-grid, .stage {
+        grid-template-columns: 1fr;
+      }
+      .sync-card {
+        width: auto;
+      }
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .timer-panel {
+        grid-template-columns: 1fr;
+      }
+      .timer-panel.compact {
+        grid-template-columns: 1fr auto;
+      }
+      .timer-display {
+        text-align: left;
+      }
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+      .search {
+        grid-template-columns: 1fr;
+      }
+      .brand h1 { font-size: 28px; }
+      .big-number { font-size: 86px; }
+      .app { padding: 10px 10px 78px; }
+      .mobile-quick { display: grid; }
+      .sync-row, .mode-strip { grid-template-columns: 1fr; }
+      .student-grid { grid-template-columns: 1fr; }
+      .status-board { grid-template-columns: 1fr; }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+      .tab {
+        padding: 0 6px;
+        min-width: 0;
+        font-size: 14px;
+      }
+      .toolbar .filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .toolbar .btn {
+        min-width: 0;
+        padding: 0 8px;
+      }
+      .mobile-quick {
+        left: 6px;
+        right: 6px;
+        gap: 4px;
+        padding: 6px;
+      }
+      .mobile-quick .btn {
+        padding: 0 4px;
+        font-size: 12px;
+      }
+      .matrix-wrap { max-height: calc(100vh - 230px); }
+      th, td { font-size: 12px; padding: 5px; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fxCanvas"></canvas>
+  <canvas id="ribbonCanvas"></canvas>
+  <div class="app">
+    <header class="topbar">
+      <section class="brand">
+        <h1>201班背书计划</h1>
+        <p>二年级下册数学期末复习，覆盖朗读版复习单与课堂背诵重点。课堂抽查、背诵登记、抄写复查、全班进度集中在这里。</p>
+      </section>
+      <aside class="sync-card">
+        <strong>数据与备份</strong>
+        <div class="sync-row">
+          <button class="btn primary" id="exportBtn">导出备份</button>
+          <button class="btn" id="importBtn">导入备份</button>
+          <button class="btn warn" id="copyToRecheckBtn">抄写转复查</button>
+          <button class="btn danger" id="resetBtn">清空记录</button>
+        </div>
+        <div class="mode-strip">
+          <button class="btn good" id="soundBtn">音效开启</button>
+          <button class="btn" id="copyStateBtn">复制状态链接</button>
+          <button class="btn primary" id="addItemTopBtn">新增知识点</button>
+          <button class="btn" id="copyMissingBtn">复制未完名单</button>
+          <button class="btn dark" id="fullscreenBtn">全屏投影</button>
+        </div>
+        <div class="last-save" id="lastSave">正在读取本机记录</div>
+        <input class="hidden-file" id="importFile" type="file" accept="application/json" />
+      </aside>
+    </header>
+
+    <section class="stats" id="stats"></section>
+
+    <section class="timer-panel compact" id="timerPanel">
+      <div class="timer-title">
+        <strong>课堂计时器</strong>
+        <span id="timerHint">点击展开，可用于限时背诵、抄写、复查或分段冲刺。</span>
+      </div>
+      <div class="timer-display" id="timerDisplay">00:00:00</div>
+      <div class="timer-controls">
+        <div class="timer-inputs">
+          <label>时<input id="timerHour" type="number" min="0" max="9" value="0" inputmode="numeric" /></label>
+          <label>分<input id="timerMinute" type="number" min="0" max="59" value="5" inputmode="numeric" /></label>
+          <label>秒<input id="timerSecond" type="number" min="0" max="59" value="0" inputmode="numeric" /></label>
+        </div>
+        <div class="timer-buttons">
+          <button class="btn primary" id="timerStartBtn">开始</button>
+          <button class="btn" id="timerPauseBtn">暂停</button>
+          <button class="btn warn" id="timerResetBtn">重置</button>
+        </div>
+        <div class="timer-presets">
+          <button class="btn" data-timer-preset="180">3分钟</button>
+          <button class="btn" data-timer-preset="300">5分钟</button>
+          <button class="btn" data-timer-preset="600">10分钟</button>
+          <button class="btn" data-timer-preset="900">15分钟</button>
+        </div>
+      </div>
+    </section>
+
+    <nav class="toolbar">
+      <div class="tabs">
+        <button class="tab active" data-view="overview">分段进度</button>
+        <button class="tab" data-view="register">登记台</button>
+        <button class="tab" data-view="alerts">提醒台</button>
+        <button class="tab" data-view="items">知识点</button>
+        <button class="tab" data-view="screen">大屏展示</button>
+      </div>
+      <div class="search">
+        <input id="searchInput" placeholder="搜索" />
+        <select id="groupSelect"></select>
+        <select id="moduleSelect"></select>
+        <select id="statusSelect">
+          <option value="all">全部状态</option>
+          <option value="unfinished">未完成</option>
+          <option value="done">已背过</option>
+          <option value="copy">抄写补上</option>
+          <option value="recheck">待复查</option>
+        </select>
+      </div>
+      <div class="filters">
+        <button class="btn dark" id="drawBtn">随机抽查</button>
+        <button class="btn primary" id="reviewDrawBtn">已背回抽</button>
+        <button class="btn good" id="showNeedBtn" title="跳到提醒台，查看哪些知识点还差哪些学生、哪些记录要复查。">查看提醒</button>
+      </div>
+    </nav>
+
+    <main class="main">
+      <section class="view active" id="overviewView">
+        <div class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <h2>分段进度</h2>
+            <span class="chip good" id="groupTopChip">准备开始</span>
+          </div>
+          <div class="panel-body">
+            <div class="group-grid" id="groupGrid"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <h2>个人进度</h2>
+            <span class="chip" id="studentCountChip"></span>
+          </div>
+          <div class="panel-body">
+            <div class="student-grid" id="studentGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="registerView">
+        <div class="status-board">
+          <div class="panel">
+            <div class="panel-head"><h2>待复查提醒</h2><span class="chip red" id="recheckCountChip">0</span></div>
+            <div class="panel-body"><div class="status-list" id="recheckList"></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>抄写补上提醒</h2><span class="chip warn" id="copyCountChip">0</span></div>
+            <div class="panel-body"><div class="status-list" id="copyList"></div></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <h2>逐项登记</h2>
+            <div class="chips">
+              <span class="chip violet">上方先选学号段</span>
+              <span class="chip good">已背</span>
+              <span class="chip warn">抄写</span>
+              <span class="chip red">复查</span>
+            </div>
+          </div>
+          <div class="matrix-wrap">
+            <table id="matrixTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="alertsView">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>重点提醒</h2>
+            <button class="btn" id="drawFromAlertBtn">从提醒中抽</button>
+          </div>
+          <div class="panel-body">
+            <p class="hint">这里专门留给后期收尾用：看每个知识点还剩哪些同学没过、哪些要复查。点“从提醒中抽”会优先从这些记录里抽。</p>
+            <div class="alert-stack" id="alertStack"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="itemsView">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>知识点进度</h2>
+            <div class="filters">
+              <button class="btn primary" id="addItemBtn">新增知识点</button>
+              <button class="btn" id="resetFilterBtn">显示全部</button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="item-grid" id="itemGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="screenView">
+        <div class="stage">
+          <div class="screen-card">
+            <h2>今天再推进一点点</h2>
+            <div class="big-number" id="screenPercent">0%</div>
+            <div class="screen-sub" id="screenLine">全班正在进入复习冲刺状态</div>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>完成榜</h2><span class="chip" id="screenNeed"></span></div>
+            <div class="panel-body"><div class="leaderboard" id="leaderboard"></div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <aside class="drawer" id="drawer">
+    <div class="drawer-head">
+      <div>
+        <h2 id="drawerName">学生</h2>
+        <div class="chips" id="drawerChips"></div>
+      </div>
+      <button class="btn drawer-close" id="closeDrawer">关闭</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"></div>
+    <div class="drawer-foot">
+      <small>登记完不用回到顶部，点右侧按钮即可收起。</small>
+      <button class="btn dark drawer-close" id="closeDrawerBottom">收起</button>
+    </div>
+  </aside>
+
+  <div class="spotlight" id="spotlight">
+    <div class="spot-card" id="spotCard">
+      <div class="chip red" id="spotLabel">随机抽查</div>
+      <div class="spot-name" id="spotName">准备</div>
+      <div class="spot-topic" id="spotTopic">选择一位同学和一个知识点</div>
+      <div class="draw-hint" id="spotHint"></div>
+      <div class="candidate-grid" id="spotCandidates"></div>
+      <button class="btn primary" id="spotReveal" style="margin:0 auto 14px">显示答案</button>
+      <div class="chips" style="justify-content:center;margin-bottom:16px" id="spotContent"></div>
+      <div class="filters spot-actions">
+        <button class="btn good" id="spotDone">已背过</button>
+        <button class="btn warn" id="spotCopy">抄写补上</button>
+        <button class="btn danger" id="spotRecheck">待复查</button>
+        <button class="btn" id="spotClose">关闭</button>
+      </div>
+      <div class="filters spot-next-row">
+        <button class="btn primary" id="spotNext">下一个</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="celebration" id="celebration">
+    <div class="celebration-card">
+      <div class="celebration-stamps"><span>恭喜</span><span>完成</span><span>祝贺</span></div>
+      <div class="celebration-content">
+        <p class="chip good" id="celebrationType">完成提醒</p>
+        <h2 class="celebration-title" id="celebrationTitle">太棒了</h2>
+        <p class="celebration-sub" id="celebrationSub">新的进度已经记录。</p>
+        <div class="filters" style="justify-content:center;margin-top:24px">
+          <button class="btn good" id="celebrationClose">继续登记</button>
+          <button class="btn primary" id="celebrationDraw">奖励抽查</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="item-editor" id="itemEditor">
+    <div class="editor-card">
+      <div class="panel-head">
+        <h2>教师新增知识点</h2>
+        <button class="btn" id="closeItemEditor">关闭</button>
+      </div>
+      <div class="editor-body">
+        <div class="form-row">
+          <label for="newItemModule">所属模块</label>
+          <input id="newItemModule" list="moduleSuggestionList" placeholder="例如：单位换算、三角形、小数" />
+          <datalist id="moduleSuggestionList"></datalist>
+        </div>
+        <div class="form-row">
+          <label for="newItemTitle">知识点名称</label>
+          <input id="newItemTitle" placeholder="例如：小数与单位换算综合题" />
+        </div>
+        <div class="form-row">
+          <label for="newItemContent">背诵或抽查内容</label>
+          <textarea id="newItemContent" placeholder="把要学生背、默、抽查的内容写在这里。"></textarea>
+        </div>
+        <div class="filters" style="justify-content:flex-end">
+          <button class="btn" id="clearItemForm">清空</button>
+          <button class="btn primary" id="saveNewItem">保存新增</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-quick">
+    <button class="btn dark" data-mobile-view="overview">看板</button>
+    <button class="btn" data-mobile-view="register">登记</button>
+    <button class="btn" data-mobile-view="items">知识</button>
+    <button class="btn primary" id="mobileDraw">抽查</button>
+    <button class="btn good" id="mobileReviewDraw">回抽</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STUDENTS = [{"id":1,"name":"梁星珀"},{"id":2,"name":"霍晋航"},{"id":3,"name":"徐乐乐"},{"id":4,"name":"潘永涛"},{"id":5,"name":"霍沛琛"},{"id":6,"name":"霍堡楠"},{"id":7,"name":"梁皓希"},{"id":8,"name":"陈子乐"},{"id":9,"name":"韩智宇"},{"id":10,"name":"霍向峰"},{"id":11,"name":"梁森焱"},{"id":12,"name":"郭俊延"},{"id":13,"name":"罗俊昇"},{"id":14,"name":"霍健滔"},{"id":15,"name":"梁敏华"},{"id":16,"name":"韦斯铭"},{"id":17,"name":"邓志军"},{"id":18,"name":"覃浩原"},{"id":19,"name":"符柏然"},{"id":20,"name":"刘昂挺"},{"id":21,"name":"李航宇"},{"id":22,"name":"陈熹临"},{"id":23,"name":"许锐标"},{"id":24,"name":"张国裕"},{"id":25,"name":"黄伟栋"},{"id":26,"name":"李思妍"},{"id":27,"name":"周诗韵"},{"id":28,"name":"梁惠岚"},{"id":29,"name":"陈芷仪"},{"id":30,"name":"霍思妍"},{"id":31,"name":"罗靖橦"},{"id":32,"name":"周晓颖"},{"id":33,"name":"陈雨果"},{"id":34,"name":"田柠柠"},{"id":35,"name":"霍泳琳"},{"id":36,"name":"杨舒惠"},{"id":37,"name":"韦开沛"},{"id":38,"name":"邓诗慧"},{"id":39,"name":"叶雅楠"},{"id":40,"name":"霍晓虹"},{"id":41,"name":"邓芷夏"},{"id":42,"name":"曾紫琳"},{"id":43,"name":"彭梓宜"},{"id":44,"name":"肖梦汐"},{"id":45,"name":"谢润东"}];
+    const ITEMS = [{"id":1,"module":"认识时间","title":"整时认识","content":"分针指向12，时针指向几就是几时。"},{"id":2,"module":"认识时间","title":"钟面一圈表示的时间","content":"时针转一圈表示过了12时；分针转一圈表示过了60分；秒针转一圈表示过了60秒。"},{"id":3,"module":"认识时间","title":"读几时几分","content":"先看时针，时针过了几就是几时；再看分针，从12起数第几小格就是几分，也可看分针指向几就用几乘5。"},{"id":4,"module":"认识时间","title":"电子表示法","content":"用电子表示法时，不满10分钟要用0占位，如7时5分写作7:05。"},{"id":5,"module":"认识时间","title":"经过时间","content":"经过时间=结束时刻-开始时刻；跨整时要记住1时=60分。"},{"id":6,"module":"有余数的除法","title":"余数的意义","content":"把物体平均分，分完后还有剩余但不够再分一份，剩下的部分就是余数。"},{"id":7,"module":"有余数的除法","title":"分什么剩什么","content":"分什么就剩什么，被除数和余数的单位相同。"},{"id":8,"module":"有余数的除法","title":"余数和除数关系","content":"余数必须小于除数；余数最大=除数-1；有余数时，余数最小是1。"},{"id":9,"module":"有余数的除法","title":"除法关系式","content":"被除数=除数×商+余数；可以用这个关系式检查结果。"},{"id":10,"module":"有余数的除法","title":"周期余数判断","content":"余数是几，就对应一组中的第几个；没有余数，就对应一组中的最后一个。"},{"id":11,"module":"数量间的乘除关系","title":"找数量关系三步","content":"定标准，圈一圈，找倍数。把一个数看成一份，另一个数有这样的几份，就是第一个数的几倍。"},{"id":12,"module":"数量间的乘除关系","title":"倍的含义","content":"倍表示两个数量之间的倍数关系，结果不带单位。"},{"id":13,"module":"数量间的乘除关系","title":"倍数题方法","content":"谁是谁的几倍，求倍数，用除法；谁的几倍是多少，用乘法；已知几倍是多少求一份，也用除法。"},{"id":14,"module":"万以内数的认识","title":"几位数范围","content":"最小两位数10，最大两位数99；最小三位数100，最大三位数999；最小四位数1000，最大四位数9999。"},{"id":15,"module":"万以内数的认识","title":"数位顺序表","content":"数位顺序：万位、千位、百位、十位、个位；计数单位：万、千、百、十、一。"},{"id":16,"module":"万以内数的认识","title":"读数写数","content":"读数和写数都从最高位开始；哪一位上一个也没有，就写0占位。"},{"id":17,"module":"万以内数的认识","title":"0的读法","content":"读数时，中间不管有几个0，都只读一个零；末尾不管有几个0，都不读。"},{"id":18,"module":"万以内数的认识","title":"比较大小","content":"先看位数，位数多的数就大；位数相同，从最高位比起。"},{"id":19,"module":"万以内加法和减法","title":"加法笔算","content":"相同数位要对齐，从个位加起；哪一位相加满十，就向前一位进1。"},{"id":20,"module":"万以内加法和减法","title":"减法笔算","content":"相同数位要对齐，从个位减起；哪一位不够减，就从前一位退1，在本位上加10再减。"},{"id":21,"module":"万以内加法和减法","title":"加法意义","content":"把两个数合并成一个数的运算叫加法。"},{"id":22,"module":"万以内加法和减法","title":"减法意义","content":"已知两个加数的和与其中一个加数，求另一个加数的运算叫减法；减法是加法的逆运算。"},{"id":23,"module":"万以内加法和减法","title":"加法各部分关系","content":"和=加数+加数；加数=和-另一个加数。"},{"id":24,"module":"万以内加法和减法","title":"减法各部分关系","content":"差=被减数-减数；减数=被减数-差；被减数=减数+差。"},{"id":25,"module":"万以内加法和减法","title":"加减法验算","content":"验算加法，可以交换加数再算，也可以用和减去一个加数；验算减法，可以用减数加差或被减数减差。"},{"id":26,"module":"万以内加法和减法","title":"加减法变化规律","content":"一个加数不变，另一个加数增加几，和也增加几；被减数不变，减数增加几，差就减少几。"},{"id":27,"module":"万以内加法和减法","title":"估算够不够","content":"估算题先看问够还是不够；估大了都够，实际一定够；估小了都不够，实际一定不够。"}];
+
+    const BASE_ITEM_COUNT = ITEMS.length;
+
+    const GROUPS = [{"id":"s1","label":"1-15号","range":"1-15号","memberIds":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]},{"id":"s2","label":"16-30号","range":"16-30号","memberIds":[16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]},{"id":"s3","label":"31-45号","range":"31-45号","memberIds":[31,32,33,34,35,36,37,38,39,40,41,42,43,44,45]}];
+
+    const STORAGE_KEY = "class201_math_recitation_v1";
+    const state = {
+      records: {},
+      activeView: "overview",
+      query: "",
+      module: "all",
+      group: "all",
+      status: "all",
+      selectedStudent: null,
+      activeSpot: null,
+      reviewTimer: null,
+      lastDrawMode: "random",
+      customItems: [],
+      timerDuration: 300,
+      timerRemaining: 300,
+      timerRunning: false,
+      timerEndAt: null,
+      timerTick: null,
+      savedAt: null,
+      soundOn: true
+    };
+
+    const labelMap = {
+      none: "",
+      done: "已背",
+      copy: "抄写",
+      recheck: "复查"
+    };
+
+    const marks = {
+      none: "",
+      done: "✓",
+      copy: "抄",
+      recheck: "!"
+    };
+
+    function keyOf(studentId, itemId) {
+      return `${studentId}-${itemId}`;
+    }
+
+    function getStatus(studentId, itemId) {
+      return state.records[keyOf(studentId, itemId)]?.status || "none";
+    }
+
+    function sanitizeText(text, fallback = "") {
+      return String(text || "").trim().replace(/\s+/g, " ") || fallback;
+    }
+
+    function applyCustomItems() {
+      ITEMS.splice(BASE_ITEM_COUNT);
+      state.customItems.forEach(item => ITEMS.push(item));
+    }
+
+    function normalizeCustomItems(items) {
+      return (Array.isArray(items) ? items : [])
+        .map((item, index) => ({
+          id: Number(item.id) || 1001 + index,
+          module: sanitizeText(item.module, "教师补充"),
+          title: sanitizeText(item.title, "补充知识点"),
+          content: sanitizeText(item.content, "请按老师补充内容进行背诵。"),
+          custom: true,
+          createdAt: item.createdAt || new Date().toISOString()
+        }))
+        .filter(item => item.title && item.content);
+    }
+
+    function nextCustomItemId() {
+      const ids = ITEMS.map(item => Number(item.id)).filter(Boolean);
+      return Math.max(1000, ...ids) + 1;
+    }
+
+    function groupById(groupId) {
+      return GROUPS.find(group => group.id === groupId) || null;
+    }
+
+    function studentGroup(studentId) {
+      return GROUPS.find(group => group.memberIds.includes(studentId)) || null;
+    }
+
+    function groupLeaderLabel(group) {
+      return group.label || group.range || "未分段";
+    }
+
+    function groupDisplayName(group) {
+      return group.label || group.range || "未分段";
+    }
+
+    function groupPraise(percent) {
+      if (percent >= 100) return "本段全部完成，可以接受全班表扬。";
+      if (percent >= 90) return "已经接近完成，盯住最后几项就能收口。";
+      if (percent >= 75) return "推进很稳，适合同桌互抽。";
+      if (percent >= 50) return "进入追赶区，先把未完成名单逐个清掉。";
+      return "从最少的同学开始补，今天先把进度拉起来。";
+    }
+
+    function groupStats(group) {
+      const members = STUDENTS.filter(student => group.memberIds.includes(student.id));
+      const memberRows = members.map(student => ({ student, ...studentStats(student) }));
+      const total = members.length * ITEMS.length;
+      const done = memberRows.reduce((sum, row) => sum + row.done, 0);
+      const copy = memberRows.reduce((sum, row) => sum + row.copy, 0);
+      const recheck = memberRows.reduce((sum, row) => sum + row.recheck, 0);
+      const finished = done + copy;
+      const unfinished = Math.max(0, total - finished);
+      const percent = total ? Math.round(finished / total * 100) : 0;
+      const lagging = memberRows
+        .filter(row => row.unfinished > 0 || row.recheck > 0)
+        .sort((a, b) => b.unfinished - a.unfinished || b.recheck - a.recheck)
+        .slice(0, 4);
+      return { group, members, memberRows, done, copy, recheck, finished, unfinished, total, percent, lagging };
+    }
+
+    function setStatus(studentId, itemId, status) {
+      const before = snapshotProgress(studentId, itemId);
+      const key = keyOf(studentId, itemId);
+      if (status === "none") {
+        delete state.records[key];
+      } else {
+        state.records[key] = { status, updatedAt: new Date().toISOString() };
+      }
+      save();
+      render();
+      if (state.selectedStudent?.id === studentId && document.getElementById("drawer").classList.contains("open")) {
+        openStudent(studentId);
+      }
+      if (status === "recheck") {
+        playChime("recheck");
+        particleBurst(document.querySelector(`[data-mark="${studentId}-${itemId}"]`), "recheck");
+      }
+      if (status === "none") playChime("clear");
+      rewardIfNeeded(studentId, itemId, status, before);
+    }
+
+    function cycleStatus(studentId, itemId) {
+      const order = ["none", "done", "copy", "recheck"];
+      const current = getStatus(studentId, itemId);
+      const next = order[(order.indexOf(current) + 1) % order.length];
+      setStatus(studentId, itemId, next);
+    }
+
+    function load() {
+      try {
+        if (location.hash.startsWith("#state=")) {
+          const encoded = location.hash.slice(7);
+          const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+          state.records = decoded.records || {};
+          state.customItems = normalizeCustomItems(decoded.customItems);
+          applyCustomItems();
+          state.savedAt = decoded.savedAt || new Date().toISOString();
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({ records: state.records, customItems: state.customItems, savedAt: state.savedAt, soundOn: state.soundOn }));
+          history.replaceState(null, "", location.pathname);
+          return;
+        }
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        state.records = data.records || {};
+        state.customItems = normalizeCustomItems(data.customItems);
+        applyCustomItems();
+        state.savedAt = data.savedAt || null;
+        state.soundOn = data.soundOn !== false;
+      } catch {
+        state.records = {};
+        state.customItems = [];
+        applyCustomItems();
+      }
+    }
+
+    function save() {
+      state.savedAt = new Date().toISOString();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ records: state.records, customItems: state.customItems, savedAt: state.savedAt, soundOn: state.soundOn }));
+    }
+
+    function snapshotProgress(studentId, itemId) {
+      const student = STUDENTS.find(item => item.id === studentId);
+      const target = ITEMS.find(item => item.id === itemId);
+      const st = studentStats(student);
+      const moduleItems = ITEMS.filter(item => item.module === target.module);
+      const moduleDone = moduleItems.every(item => ["done", "copy"].includes(getStatus(studentId, item.id)));
+      const group = studentGroup(studentId);
+      const groupSnapshot = group ? groupStats(group) : null;
+      return {
+        student,
+        target,
+        finished: st.finished,
+        allDone: st.unfinished === 0,
+        moduleDone,
+        group,
+        groupPercent: groupSnapshot ? groupSnapshot.percent : 0,
+        groupFinished: groupSnapshot ? groupSnapshot.finished : 0,
+        groupAllDone: groupSnapshot ? groupSnapshot.unfinished === 0 : false
+      };
+    }
+
+    function rewardIfNeeded(studentId, itemId, status, before) {
+      if (!["done", "copy"].includes(status)) return;
+      const after = snapshotProgress(studentId, itemId);
+      const button = document.querySelector(`[data-mark="${studentId}-${itemId}"]`);
+      if (button) {
+        button.classList.add("pop");
+        setTimeout(() => button.classList.remove("pop"), 430);
+      }
+      playChime(status === "done" ? "done" : "copy");
+      particleBurst(button, status === "done" ? "small" : "copy");
+      rewardGroupIfNeeded(before, after);
+      if (!before.moduleDone && after.moduleDone) {
+        setTimeout(() => {
+          playChime("module");
+          particleBurst(null, "module");
+          showCelebration("单元完成", `${after.student.name} 完成了「${after.target.module}」`, "这个模块已经过关，可以安排下一组挑战。", "module");
+        }, 220);
+      }
+      if (!before.allDone && after.allDone) {
+        setTimeout(() => {
+          playChime("grand");
+          particleBurst(null, "grand");
+          showCelebration("全项完成", `${after.student.name} 全部背完了`, `${ITEMS.length}个知识点全部完成，值得全班看见这一刻。`, "grand");
+        }, 520);
+      }
+    }
+
+    function rewardGroupIfNeeded(before, after) {
+      if (!after.group || after.groupPercent <= before.groupPercent) return;
+      const groupName = groupDisplayName(after.group);
+      if (!before.groupAllDone && after.groupAllDone) {
+        setTimeout(() => {
+          playChime("grand");
+          particleBurst(null, "grand");
+          showCelebration("分段满格", `${groupName} 本段完成`, `${after.group.range}已经全部过关。`, "grand");
+        }, 780);
+        return;
+      }
+      const milestone = [90, 75, 50].find(mark => before.groupPercent < mark && after.groupPercent >= mark);
+      if (!milestone) return;
+      setTimeout(() => {
+        playChime(milestone >= 75 ? "module" : "small");
+        toast(`${groupName} 完成率达到 ${after.groupPercent}%：${groupPraise(after.groupPercent)}`);
+      }, 360);
+    }
+
+    function stats() {
+      const total = STUDENTS.length * ITEMS.length;
+      let done = 0, copy = 0, recheck = 0;
+      Object.values(state.records).forEach(record => {
+        if (record.status === "done") done++;
+        if (record.status === "copy") copy++;
+        if (record.status === "recheck") recheck++;
+      });
+      const finished = done + copy;
+      const unfinished = total - finished;
+      const percent = total ? Math.round(finished / total * 100) : 0;
+      return { total, done, copy, recheck, finished, unfinished, percent };
+    }
+
+    function studentStats(student) {
+      let done = 0, copy = 0, recheck = 0;
+      const missing = [];
+      ITEMS.forEach(item => {
+        const status = getStatus(student.id, item.id);
+        if (status === "done") done++;
+        else if (status === "copy") copy++;
+        else if (status === "recheck") {
+          recheck++;
+          missing.push(item);
+        } else {
+          missing.push(item);
+        }
+      });
+      const finished = done + copy;
+      const percent = Math.round(finished / ITEMS.length * 100);
+      return { done, copy, recheck, missing, finished, percent, unfinished: ITEMS.length - finished };
+    }
+
+    function itemStats(item) {
+      let done = 0, copy = 0, recheck = 0;
+      const missing = [];
+      STUDENTS.forEach(student => {
+        const status = getStatus(student.id, item.id);
+        if (status === "done") done++;
+        else if (status === "copy") copy++;
+        else if (status === "recheck") {
+          recheck++;
+          missing.push(student);
+        } else {
+          missing.push(student);
+        }
+      });
+      const finished = done + copy;
+      const percent = Math.round(finished / STUDENTS.length * 100);
+      return { done, copy, recheck, missing, finished, percent, unfinished: STUDENTS.length - finished };
+    }
+
+    function filteredStudents() {
+      const q = state.query.trim();
+      const activeGroup = groupById(state.group);
+      return STUDENTS.filter(student => {
+        const st = studentStats(student);
+        const matchesText = !q || student.name.includes(q) || String(student.id) === q;
+        const matchesGroup = !activeGroup || activeGroup.memberIds.includes(student.id);
+        let matchesStatus = true;
+        if (state.status === "unfinished") matchesStatus = st.unfinished > 0 || st.recheck > 0;
+        if (state.status === "done") matchesStatus = st.unfinished === 0 && st.recheck === 0;
+        if (state.status === "copy") matchesStatus = st.copy > 0;
+        if (state.status === "recheck") matchesStatus = st.recheck > 0;
+        return matchesText && matchesStatus && matchesGroup;
+      });
+    }
+
+    function filteredItems() {
+      const q = state.query.trim();
+      return ITEMS.filter(item => {
+        const matchesModule = state.module === "all" || item.module === state.module;
+        const matchesText = !q || item.title.includes(q) || item.content.includes(q) || item.module.includes(q) || String(item.id) === q;
+        return matchesModule && matchesText;
+      });
+    }
+
+    function renderStats() {
+      const s = stats();
+      document.getElementById("soundBtn").textContent = state.soundOn ? "音效开启" : "音效关闭";
+      document.getElementById("soundBtn").className = state.soundOn ? "btn good" : "btn";
+      const blocks = [
+        ["全班完成率", `${s.percent}%`, `${s.finished}/${s.total} 项`, "--green"],
+        ["已背过", s.done, "直接通过的记录", "--blue"],
+        ["抄写补上", s.copy, "需要择机复查", "--amber"],
+        ["待复查", s.recheck, "课堂优先抽查", "--red"],
+        ["未完成", s.unfinished, "包含空白与复查", "--violet"]
+      ];
+      document.getElementById("stats").innerHTML = blocks.map(([label, value, sub, accent]) => `
+        <div class="stat" style="--accent:var(${accent})">
+          <div class="label">${label}</div>
+          <div class="value">${value}</div>
+          <div class="sub">${sub}</div>
+        </div>
+      `).join("");
+      const ring = document.getElementById("ring");
+      if (ring) ring.style.setProperty("--p", s.percent);
+      const ringText = document.getElementById("ringText");
+      if (ringText) ringText.textContent = `${s.percent}%`;
+      const overallChip = document.getElementById("overallChip");
+      if (overallChip) overallChip.textContent = `${s.finished}/${s.total}`;
+      document.getElementById("screenPercent").textContent = `${s.percent}%`;
+      document.getElementById("screenLine").textContent = s.recheck ? `还有 ${s.recheck} 个待复查记录` : `还有 ${s.unfinished} 个项目等待推进`;
+      document.getElementById("screenNeed").textContent = `未完成 ${s.unfinished}`;
+      document.getElementById("lastSave").textContent = state.savedAt ? `已保存：${new Date(state.savedAt).toLocaleString("zh-CN")}` : "还没有登记记录";
+    }
+
+    function renderModuleOptions() {
+      const select = document.getElementById("moduleSelect");
+      const modules = ["all", ...new Set(ITEMS.map(item => item.module))];
+      select.innerHTML = modules.map(module => `<option value="${module}">${module === "all" ? "全部模块" : module}</option>`).join("");
+      select.value = state.module;
+      const suggestion = document.getElementById("moduleSuggestionList");
+      if (suggestion) {
+        suggestion.innerHTML = modules
+          .filter(module => module !== "all")
+          .map(module => `<option value="${module}"></option>`)
+          .join("");
+      }
+    }
+
+    function renderGroupOptions() {
+      const select = document.getElementById("groupSelect");
+      select.innerHTML = [
+        `<option value="all">全部分段</option>`,
+        ...GROUPS.map(group => `<option value="${group.id}">${groupDisplayName(group)} · ${group.range}</option>`)
+      ].join("");
+      select.value = state.group;
+    }
+
+    function renderAlerts() {
+      const weakItems = ITEMS
+        .map(item => ({ item, ...itemStats(item) }))
+        .sort((a, b) => (b.unfinished + b.recheck * 2) - (a.unfinished + a.recheck * 2))
+        .slice(0, 6);
+      document.getElementById("alertStack").innerHTML = weakItems.map((entry, index) => `
+        <div class="alert-card">
+          <div class="rank">${index + 1}</div>
+          <div>
+            <strong>${entry.item.title}</strong>
+            <small>${entry.item.module} · 还差 ${entry.unfinished} 人 · 待复查 ${entry.recheck}</small>
+            <small>${entry.missing.slice(0, 10).map(student => `${student.id}号${student.name}`).join("、")}${entry.missing.length > 10 ? ` 等${entry.missing.length}人` : ""}</small>
+          </div>
+          <button class="btn" onclick="focusItem(${entry.item.id})">查看</button>
+        </div>
+      `).join("");
+    }
+
+    function renderGroups() {
+      const entries = GROUPS
+        .map(group => groupStats(group))
+        .sort((a, b) => b.percent - a.percent || Number(a.group.memberIds[0]) - Number(b.group.memberIds[0]));
+      const top = entries[0];
+      document.getElementById("groupTopChip").textContent = top ? `领先：${groupDisplayName(top.group)} ${top.percent}%` : "准备开始";
+      document.getElementById("groupGrid").innerHTML = entries.map((entry, index) => {
+        const missingNames = entry.lagging.map(row => `${row.student.id}号${row.student.name}`);
+        return `
+          <article class="group-card featured ${index === 0 ? "leading" : ""} ${entry.unfinished === 0 ? "complete" : ""}">
+            <div class="group-head">
+              <div>
+                <div class="group-title">${groupDisplayName(entry.group)}</div>
+                <div class="group-meta">学号段 ${entry.group.range} · ${entry.members.length}人</div>
+              </div>
+              <div class="group-rank">第${index + 1}</div>
+            </div>
+            <div class="group-percent">${entry.percent}%</div>
+            <div class="bar"><i style="width:${entry.percent}%"></i></div>
+            <div class="chips">
+              <span class="chip good">${entry.percent}%</span>
+              <span class="chip">${entry.finished}/${entry.total}</span>
+              ${entry.copy ? `<span class="chip warn">抄写${entry.copy}</span>` : ""}
+              ${entry.recheck ? `<span class="chip red">复查${entry.recheck}</span>` : ""}
+            </div>
+            <div class="group-note">${groupPraise(entry.percent)}${missingNames.length ? ` 重点看：${missingNames.join("、")}` : ""}</div>
+            <div class="group-actions">
+              <button class="btn" onclick="focusGroup('${entry.group.id}')">只看这段</button>
+              <span class="chip ${entry.unfinished === 0 ? "good" : "red"}">${entry.unfinished === 0 ? "本段完成" : `未完成 ${entry.unfinished}`}</span>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderStudents() {
+      const students = filteredStudents();
+      document.getElementById("studentCountChip").textContent = `${students.length} 名学生`;
+      document.getElementById("studentGrid").innerHTML = students.map(student => {
+        const st = studentStats(student);
+        const group = studentGroup(student.id);
+        const groupBadge = group ? `<span class="chip violet">学号段：${groupLeaderLabel(group)}</span>` : `<span class="chip">测试账号</span>`;
+        const missingModules = [...new Set(st.missing.slice(0, 6).map(item => item.module))];
+        return `
+          <button class="student-card ${st.unfinished === 0 && st.recheck === 0 ? "done-all" : ""}" onclick="openStudent(${student.id})">
+            <div class="student-title"><span class="student-name">${student.name}</span><span class="student-id">${student.id}号</span></div>
+            <div class="bar"><i style="width:${st.percent}%"></i></div>
+            <div class="chips">
+              ${groupBadge}
+              <span class="chip good">${st.percent}%</span>
+              <span class="chip">${st.finished}/${ITEMS.length}</span>
+              ${st.copy ? `<span class="chip warn">抄写${st.copy}</span>` : ""}
+              ${st.recheck ? `<span class="chip red">复查${st.recheck}</span>` : ""}
+              ${missingModules.map(module => `<span class="chip violet">${module}</span>`).join("")}
+            </div>
+          </button>
+        `;
+      }).join("");
+    }
+
+    function statusEntries(targetStatus) {
+      const activeGroup = groupById(state.group);
+      const rows = [];
+      STUDENTS.forEach(student => {
+        if (activeGroup && !activeGroup.memberIds.includes(student.id)) return;
+        ITEMS.forEach(item => {
+          if (getStatus(student.id, item.id) === targetStatus) {
+            rows.push({ student, item });
+          }
+        });
+      });
+      return rows;
+    }
+
+    function renderStatusBoard() {
+      const rechecks = statusEntries("recheck");
+      const copies = statusEntries("copy");
+      document.getElementById("recheckCountChip").textContent = rechecks.length;
+      document.getElementById("copyCountChip").textContent = copies.length;
+      const rowHtml = rows => rows.length ? rows.slice(0, 12).map(entry => `
+        <div class="status-row">
+          <div>
+            <strong>${entry.student.id}号 ${entry.student.name}</strong>
+            <small>${entry.item.id}. ${entry.item.title} · ${entry.item.module}</small>
+          </div>
+          <button class="btn" onclick="openStudent(${entry.student.id})">查看</button>
+        </div>
+      `).join("") + (rows.length > 12 ? `<div class="chip">另 ${rows.length - 12} 项</div>` : "") : `<div class="status-row"><div><strong>暂无</strong><small>当前范围内没有需要处理的记录。</small></div></div>`;
+      document.getElementById("recheckList").innerHTML = rowHtml(rechecks);
+      document.getElementById("copyList").innerHTML = rowHtml(copies);
+    }
+
+    function renderMatrix() {
+      const items = filteredItems();
+      const students = filteredStudents();
+      let html = "<thead><tr><th class='sticky'>号</th><th class='name'>姓名</th>";
+      html += items.map(item => `<th title="${item.module}：${item.title}｜${item.content}"><span class="col-id">${item.id}</span><span class="col-title">${item.title}</span></th>`).join("");
+      html += "<th>完成</th><th>复查</th></tr></thead><tbody>";
+      html += students.map(student => {
+        const st = studentStats(student);
+        const cells = items.map(item => {
+          const status = getStatus(student.id, item.id);
+          return `<td><button class="status-btn ${status}" data-mark="${student.id}-${item.id}" title="${item.title}：${labelMap[status] || "未登记"}" onclick="cycleStatus(${student.id}, ${item.id})">${marks[status]}</button></td>`;
+        }).join("");
+        return `<tr><td class="sticky">${student.id}</td><td class="name">${student.name}</td>${cells}<td>${st.finished}</td><td>${st.recheck}</td></tr>`;
+      }).join("");
+      html += "</tbody>";
+      document.getElementById("matrixTable").innerHTML = html;
+    }
+
+    function renderItems() {
+      const items = filteredItems();
+      document.getElementById("itemGrid").innerHTML = items.map(item => {
+        const st = itemStats(item);
+        return `
+          <article class="item-card">
+            <span class="chip violet">${item.id} · ${item.module}</span>
+            ${item.custom ? `<span class="chip warn">教师新增</span>` : ""}
+            <h3>${item.title}</h3>
+            <p>${item.content}</p>
+            <div class="bar"><i style="width:${st.percent}%"></i></div>
+            <div class="chips" style="margin-bottom:8px">
+              <span class="chip good">${st.percent}%</span>
+              <span class="chip">已完成 ${st.finished}</span>
+              <span class="chip red">未完成 ${st.unfinished}</span>
+            </div>
+            <div class="need-list">
+              ${st.missing.slice(0, 18).map(student => `<button class="chip" onclick="openStudent(${student.id})">${student.name}</button>`).join("")}
+              ${st.missing.length > 18 ? `<span class="chip">另 ${st.missing.length - 18} 人</span>` : ""}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderScreen() {
+      const groupLeaders = GROUPS
+        .map(group => groupStats(group))
+        .sort((a, b) => b.percent - a.percent || a.group.leaderId - b.group.leaderId);
+      const leaders = STUDENTS
+        .map(student => ({ student, ...studentStats(student) }))
+        .sort((a, b) => b.percent - a.percent || a.unfinished - b.unfinished)
+        .slice(0, 12);
+      const groupRows = groupLeaders.map((entry, index) => `
+        <div class="leader-row">
+          <strong>${index + 1}</strong>
+          <span>${groupDisplayName(entry.group)} · ${entry.group.range}</span>
+          <span class="chip good">${entry.percent}%</span>
+        </div>
+      `).join("");
+      const studentRows = leaders.map((entry, index) => `
+        <div class="leader-row">
+          <strong>${index + 1}</strong>
+          <span>${entry.student.name}</span>
+          <span class="chip good">${entry.percent}%</span>
+        </div>
+      `).join("");
+      document.getElementById("leaderboard").innerHTML = `
+        <div class="leader-section-title">个人榜</div>
+        ${studentRows}
+        <div class="leader-section-title">分段榜</div>
+        ${groupRows}
+      `;
+    }
+
+    function openStudent(studentId) {
+      state.selectedStudent = STUDENTS.find(student => student.id === studentId);
+      const student = state.selectedStudent;
+      const st = studentStats(student);
+      const group = studentGroup(student.id);
+      const groupChip = group
+        ? `<span class="chip violet">${groupDisplayName(group)} · ${group.range} · ${groupLeaderLabel(group)}登记</span>`
+        : `<span class="chip">未分段</span>`;
+      document.getElementById("drawerName").textContent = `${student.id}号 ${student.name}`;
+      document.getElementById("drawerChips").innerHTML = `
+        ${groupChip}
+        <span class="chip good">完成 ${st.finished}</span>
+        <span class="chip red">未完成 ${st.unfinished}</span>
+        <span class="chip warn">抄写 ${st.copy}</span>
+        <span class="chip red">复查 ${st.recheck}</span>
+      `;
+      const groups = [
+        ["none", "未登记"],
+        ["recheck", "待复查"],
+        ["copy", "抄写补上"],
+        ["done", "已背过"]
+      ];
+      document.getElementById("drawerBody").innerHTML = groups.map(([statusKey, title]) => {
+        const list = ITEMS.filter(item => getStatus(student.id, item.id) === statusKey);
+        return `
+          <div class="leader-section-title">${title} ${list.length}</div>
+          ${list.length ? list.map(item => {
+            const status = getStatus(student.id, item.id);
+            return `
+              <div class="detail-item">
+                <div>
+                  <strong>${item.id}. ${item.title}</strong>
+                  <small>${item.module} · ${item.content}</small>
+                </div>
+                <div class="status-actions">
+                  <button class="mini done" onclick="setStatus(${student.id}, ${item.id}, 'done')">已背</button>
+                  <button class="mini copy" onclick="setStatus(${student.id}, ${item.id}, 'copy')">抄写</button>
+                  <button class="mini recheck" onclick="setStatus(${student.id}, ${item.id}, 'recheck')">复查</button>
+                  <button class="mini" onclick="setStatus(${student.id}, ${item.id}, 'none')">清空</button>
+                </div>
+              </div>
+            `;
+          }).join("") : `<div class="status-row"><div><small>暂无</small></div></div>`}
+        `;
+      }).join("");
+      document.getElementById("drawer").classList.add("open");
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawer").classList.remove("open");
+    }
+
+    function focusItem(itemId) {
+      state.activeView = "items";
+      state.query = String(itemId);
+      document.getElementById("searchInput").value = state.query;
+      switchView("items");
+      render();
+    }
+
+    function focusGroup(groupId) {
+      const group = groupById(groupId);
+      if (!group) return;
+      state.group = groupId;
+      state.query = "";
+      document.getElementById("searchInput").value = "";
+      document.getElementById("groupSelect").value = groupId;
+      switchView("register");
+      render();
+      toast(`${groupDisplayName(group)}：登记台已只显示${group.range}学生`);
+    }
+
+    function hideSpotAnswer(text = "先让学生背，背完再点“显示答案”核对。") {
+      document.getElementById("spotContent").style.display = "none";
+      document.getElementById("spotReveal").style.display = "inline-flex";
+      document.getElementById("spotReveal").textContent = "显示答案";
+      document.getElementById("spotHint").textContent = text;
+    }
+
+    function revealSpotAnswer() {
+      const content = document.getElementById("spotContent");
+      content.style.display = "flex";
+      document.getElementById("spotReveal").style.display = "none";
+      playChime("soft");
+    }
+
+    function updateSpotNextLabel() {
+      const button = document.getElementById("spotNext");
+      if (!button) return;
+      if (state.lastDrawMode === "review") button.textContent = "下一个回抽";
+      else if (state.lastDrawMode === "alert") button.textContent = "继续从提醒中抽";
+      else button.textContent = "下一个抽查";
+    }
+
+    function candidateColor(studentId) {
+      const colors = [
+        "linear-gradient(135deg, #2563eb, #06b6d4)",
+        "linear-gradient(135deg, #7c3aed, #ec4899)",
+        "linear-gradient(135deg, #10b981, #84cc16)",
+        "linear-gradient(135deg, #f59e0b, #ef4444)",
+        "linear-gradient(135deg, #0f172a, #475569)"
+      ];
+      return colors[studentId % colors.length];
+    }
+
+    function renderSpotCandidates(pool, activePick = null) {
+      const el = document.getElementById("spotCandidates");
+      if (!el) return;
+      const seen = new Set();
+      const selected = [];
+      if (activePick) {
+        selected.push(activePick);
+        seen.add(activePick.student.id);
+      }
+      let guard = 0;
+      while (selected.length < Math.min(12, pool.length) && guard < pool.length * 3) {
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        guard += 1;
+        if (seen.has(pick.student.id) && pool.length > 12) continue;
+        selected.push(pick);
+        seen.add(pick.student.id);
+      }
+      el.innerHTML = selected.map(pick => `
+        <div class="candidate-card ${activePick && pick.student.id === activePick.student.id ? "active" : ""}">
+          <div class="candidate-avatar" style="background:${candidateColor(pick.student.id)}">${pick.student.id}</div>
+          <span>${pick.student.name}</span>
+        </div>
+      `).join("");
+    }
+
+    function stopSpotTimer() {
+      if (state.reviewTimer) clearInterval(state.reviewTimer);
+      state.reviewTimer = null;
+    }
+
+    function spotPool(onlyAlerts = false) {
+      let pool = [];
+      const activeGroup = groupById(state.group);
+      const drawStudents = activeGroup ? STUDENTS.filter(student => activeGroup.memberIds.includes(student.id)) : STUDENTS;
+      drawStudents.forEach(student => {
+        ITEMS.forEach(item => {
+          const status = getStatus(student.id, item.id);
+          if (status === "none" || status === "recheck" || (onlyAlerts && status === "copy")) {
+            pool.push({ student, item, status });
+          }
+        });
+      });
+      if (!pool.length) {
+        pool = drawStudents.flatMap(student => ITEMS.map(item => ({ student, item, status: getStatus(student.id, item.id) })));
+      }
+      return pool;
+    }
+
+    function applySpotPick(pick, mode) {
+      state.activeSpot = pick;
+      const reviewMode = mode === "review";
+      const labelText = reviewMode ? "已背回抽" : pick.status === "recheck" ? "待复查抽查" : mode === "alert" ? "提醒抽查" : "随机抽查";
+      const labelClass = reviewMode ? "chip good" : pick.status === "recheck" ? "chip red" : mode === "alert" ? "chip warn" : "chip";
+      document.getElementById("spotLabel").textContent = labelText;
+      document.getElementById("spotLabel").className = labelClass;
+      document.getElementById("spotCard").classList.toggle("review-mode", reviewMode);
+      document.getElementById("spotName").classList.remove("rolling");
+      document.getElementById("spotTopic").classList.remove("rolling");
+      document.getElementById("spotName").textContent = `${pick.student.id}号 ${pick.student.name}`;
+      document.getElementById("spotTopic").textContent = `${pick.item.id}. ${pick.item.title}`;
+      document.getElementById("spotContent").innerHTML = `<span class="chip violet">${pick.item.module}</span><span class="chip">${pick.item.content}</span>`;
+      const hint = reviewMode
+        ? "回抽结果：先让这位同学现场背诵，背完再显示答案。"
+        : pick.status === "recheck"
+          ? "优先复查：先让学生背，背完再显示答案。"
+          : "先让学生背，背完再点“显示答案”核对。";
+      hideSpotAnswer(hint);
+      updateSpotNextLabel();
+      document.getElementById("spotlight").classList.add("show");
+    }
+
+    function spinSpot(pool, mode) {
+      stopSpotTimer();
+      const spot = document.getElementById("spotlight");
+      const card = document.getElementById("spotCard");
+      const nameEl = document.getElementById("spotName");
+      const topicEl = document.getElementById("spotTopic");
+      const hintEl = document.getElementById("spotHint");
+      const contentEl = document.getElementById("spotContent");
+      const labelEl = document.getElementById("spotLabel");
+      const reviewMode = mode === "review";
+      state.activeSpot = null;
+      card.classList.toggle("review-mode", reviewMode);
+      nameEl.classList.add("rolling");
+      topicEl.classList.add("rolling");
+      labelEl.textContent = reviewMode ? "已背回抽" : mode === "alert" ? "提醒抽查" : "随机抽查";
+      labelEl.className = reviewMode ? "chip good" : mode === "alert" ? "chip warn" : "chip";
+      hintEl.textContent = reviewMode
+        ? "正在从所有已背记录里跳动抽取，最后定格后进行现场复查。"
+        : "正在随机跳动抽取学生和知识点，定格后先背诵，再显示答案核对。";
+      document.getElementById("spotReveal").style.display = "none";
+      contentEl.innerHTML = reviewMode
+        ? `<span class="chip good">只抽“已背过”的记录</span><span class="chip">不包含空白、抄写、待复查</span>`
+        : `<span class="chip violet">正在抽取</span><span class="chip">姓名和知识点会一起定格</span>`;
+      contentEl.style.display = "flex";
+      renderSpotCandidates(pool);
+      updateSpotNextLabel();
+      spot.classList.add("show");
+      playChime("spin");
+
+      let ticks = 0;
+      let current = pool[0];
+      state.reviewTimer = setInterval(() => {
+        current = pool[Math.floor(Math.random() * pool.length)];
+        nameEl.textContent = `${current.student.id}号 ${current.student.name}`;
+        topicEl.textContent = `${current.item.id}. ${current.item.title}`;
+        if (ticks % 3 === 0) renderSpotCandidates(pool, current);
+        ticks += 1;
+        if (ticks % 7 === 0) playChime("tick");
+        if (ticks >= (reviewMode ? 34 : 28)) {
+          stopSpotTimer();
+          const finalPick = pool[Math.floor(Math.random() * pool.length)];
+          applySpotPick(finalPick, mode);
+          renderSpotCandidates(pool, finalPick);
+          playChime(reviewMode ? "module" : "next");
+          particleBurst(null, reviewMode ? "module" : "small");
+        }
+      }, reviewMode ? 72 : 68);
+    }
+
+    function drawRandom(onlyAlerts = false) {
+      state.lastDrawMode = onlyAlerts ? "alert" : "random";
+      spinSpot(spotPool(onlyAlerts), state.lastDrawMode);
+    }
+
+    function completedReviewPool() {
+      const pool = [];
+      const activeGroup = groupById(state.group);
+      const drawStudents = activeGroup ? STUDENTS.filter(student => activeGroup.memberIds.includes(student.id)) : STUDENTS;
+      drawStudents.forEach(student => {
+        ITEMS.forEach(item => {
+          if (getStatus(student.id, item.id) === "done") {
+            pool.push({ student, item, status: "done" });
+          }
+        });
+      });
+      return pool;
+    }
+
+    function drawCompletedReview() {
+      const pool = completedReviewPool();
+      if (!pool.length) {
+        toast("还没有已背记录，先登记几个“已背”再回抽");
+        playChime("soft");
+        return;
+      }
+      state.lastDrawMode = "review";
+      spinSpot(pool, "review");
+    }
+
+    function drawNextSpot() {
+      if (state.lastDrawMode === "review") drawCompletedReview();
+      else drawRandom(state.lastDrawMode === "alert");
+    }
+
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function audioContext() {
+      if (!state.soundOn) return null;
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!window.__reciteAudio) window.__reciteAudio = new Ctx();
+      return window.__reciteAudio;
+    }
+
+    function playTone(ctx, frequency, start, duration, volume, type = "sine") {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(frequency, start);
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(volume, start + 0.018);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.03);
+    }
+
+    function playChime(level) {
+      const ctx = audioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const patterns = {
+        soft: [523.25, 659.25],
+        tick: [880],
+        spin: [392, 523.25],
+        next: [659.25, 987.77],
+        clear: [392, 329.63],
+        recheck: [587.33, 440, 587.33],
+        copy: [440, 554.37, 659.25],
+        done: [659.25, 783.99, 1046.5],
+        small: [659.25, 783.99, 1046.5],
+        module: [523.25, 659.25, 783.99, 1174.66],
+        grand: [523.25, 659.25, 783.99, 1046.5, 1318.51]
+      };
+      const selected = patterns[level] || patterns.soft;
+      selected.forEach((freq, index) => {
+        const isGrand = level === "grand";
+        const duration = isGrand ? 0.34 : level === "tick" ? 0.055 : 0.22;
+        const volume = isGrand ? 0.11 : level === "tick" ? 0.035 : 0.075;
+        const wave = ["done", "module", "grand"].includes(level) ? (index % 2 ? "triangle" : "sine") : level === "recheck" ? "square" : "triangle";
+        playTone(ctx, freq, now + index * 0.07, duration, volume, wave);
+      });
+    }
+
+    function particleBurst(anchor, level = "small") {
+      const canvas = document.getElementById("fxCanvas");
+      const ctx = canvas.getContext("2d");
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(window.innerWidth * ratio);
+      canvas.height = Math.floor(window.innerHeight * ratio);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      let origin = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+      if (anchor) {
+        const rect = anchor.getBoundingClientRect();
+        origin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+      }
+      const colors = level === "grand"
+        ? ["#22c55e", "#06b6d4", "#f59e0b", "#ef4444", "#7c3aed", "#ffffff"]
+        : level === "module"
+          ? ["#10b981", "#38bdf8", "#fde68a", "#ffffff"]
+          : level === "copy"
+            ? ["#f59e0b", "#fde68a", "#ffffff"]
+            : level === "recheck"
+              ? ["#ef4444", "#fca5a5", "#ffffff"]
+              : ["#22c55e", "#93c5fd", "#ffffff"];
+      const count = level === "grand" ? 240 : level === "module" ? 120 : level === "recheck" ? 54 : 42;
+      const particles = Array.from({ length: count }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = (level === "grand" ? 3.8 : level === "module" ? 2.9 : 1.9) + Math.random() * 4.4;
+        return {
+          x: origin.x,
+          y: origin.y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - Math.random() * 2,
+          size: 3 + Math.random() * (level === "grand" ? 8 : 5),
+          color: colors[Math.floor(Math.random() * colors.length)],
+          life: 70 + Math.random() * 45,
+          rotation: Math.random() * Math.PI,
+          spin: (Math.random() - .5) * .25
+        };
+      });
+      let frame = 0;
+      function draw() {
+        frame += 1;
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.08;
+          p.vx *= 0.992;
+          p.rotation += p.spin;
+          const alpha = Math.max(0, 1 - frame / p.life);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * .62);
+          ctx.restore();
+        });
+        if (particles.some(p => frame < p.life)) requestAnimationFrame(draw);
+        else ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+      draw();
+    }
+
+    function ribbonShow(level = "module") {
+      const canvas = document.getElementById("ribbonCanvas");
+      const ctx = canvas.getContext("2d");
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = Math.floor(window.innerWidth * ratio);
+      canvas.height = Math.floor(window.innerHeight * ratio);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      const colors = level === "grand"
+        ? ["#22c55e", "#06b6d4", "#f59e0b", "#ef4444", "#7c3aed", "#ffffff"]
+        : ["#38bdf8", "#10b981", "#fde68a", "#ffffff"];
+      const count = level === "grand" ? 72 : 38;
+      const ribbons = Array.from({ length: count }, () => ({
+        x: Math.random() * window.innerWidth,
+        y: -40 - Math.random() * window.innerHeight * .35,
+        w: 8 + Math.random() * 12,
+        h: 20 + Math.random() * 34,
+        vy: 2.2 + Math.random() * (level === "grand" ? 3.6 : 2.4),
+        vx: -1.4 + Math.random() * 2.8,
+        swing: Math.random() * Math.PI * 2,
+        spin: (Math.random() - .5) * .22,
+        color: colors[Math.floor(Math.random() * colors.length)]
+      }));
+      let frame = 0;
+      function drawRibbon() {
+        frame += 1;
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ribbons.forEach(r => {
+          r.y += r.vy;
+          r.x += r.vx + Math.sin(frame * .05 + r.swing) * .9;
+          r.swing += r.spin;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, 1 - frame / 190);
+          ctx.translate(r.x, r.y);
+          ctx.rotate(r.swing);
+          ctx.fillStyle = r.color;
+          ctx.fillRect(-r.w / 2, -r.h / 2, r.w, r.h);
+          ctx.restore();
+        });
+        if (frame < 190 && ribbons.some(r => r.y < window.innerHeight + 80)) requestAnimationFrame(drawRibbon);
+        else ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      }
+      drawRibbon();
+    }
+
+    function showCelebration(type, title, sub, level = "module") {
+      document.getElementById("celebrationType").textContent = type;
+      document.getElementById("celebrationTitle").textContent = title;
+      document.getElementById("celebrationSub").textContent = sub;
+      const el = document.getElementById("celebration");
+      el.className = `celebration show celebration-${level}`;
+      ribbonShow(level);
+    }
+
+    function openItemEditor() {
+      document.getElementById("itemEditor").classList.add("show");
+      renderModuleOptions();
+      setTimeout(() => document.getElementById("newItemModule").focus(), 60);
+    }
+
+    function closeItemEditor() {
+      document.getElementById("itemEditor").classList.remove("show");
+    }
+
+    function clearItemForm() {
+      document.getElementById("newItemModule").value = "";
+      document.getElementById("newItemTitle").value = "";
+      document.getElementById("newItemContent").value = "";
+      document.getElementById("newItemModule").focus();
+    }
+
+    function saveNewItem() {
+      const module = sanitizeText(document.getElementById("newItemModule").value, "教师补充");
+      const title = sanitizeText(document.getElementById("newItemTitle").value);
+      const content = sanitizeText(document.getElementById("newItemContent").value);
+      if (!title || !content) {
+        toast("请填写知识点名称和背诵内容");
+        return;
+      }
+      const item = {
+        id: nextCustomItemId(),
+        module,
+        title,
+        content,
+        custom: true,
+        createdAt: new Date().toISOString()
+      };
+      state.customItems.push(item);
+      applyCustomItems();
+      save();
+      renderModuleOptions();
+      render();
+      closeItemEditor();
+      clearItemForm();
+      switchView("items");
+      state.query = String(item.id);
+      document.getElementById("searchInput").value = state.query;
+      render();
+      playChime("module");
+      toast(`已新增：${item.title}`);
+    }
+
+    function formatTime(totalSeconds) {
+      const total = Math.max(0, Math.floor(totalSeconds || 0));
+      const hours = Math.floor(total / 3600);
+      const minutes = Math.floor((total % 3600) / 60);
+      const seconds = total % 60;
+      return [hours, minutes, seconds].map(value => String(value).padStart(2, "0")).join(":");
+    }
+
+    function timerSecondsFromInputs() {
+      const h = Math.max(0, Math.min(9, Number(document.getElementById("timerHour").value) || 0));
+      const m = Math.max(0, Math.min(59, Number(document.getElementById("timerMinute").value) || 0));
+      const s = Math.max(0, Math.min(59, Number(document.getElementById("timerSecond").value) || 0));
+      return h * 3600 + m * 60 + s;
+    }
+
+    function setTimerInputs(totalSeconds) {
+      const total = Math.max(0, Math.floor(totalSeconds || 0));
+      document.getElementById("timerHour").value = Math.floor(total / 3600);
+      document.getElementById("timerMinute").value = Math.floor((total % 3600) / 60);
+      document.getElementById("timerSecond").value = total % 60;
+    }
+
+    function renderTimer() {
+      document.getElementById("timerDisplay").textContent = formatTime(state.timerRemaining);
+      document.getElementById("timerPanel").classList.toggle("running", state.timerRunning);
+      document.getElementById("timerStartBtn").textContent = state.timerRunning ? "计时中" : "开始";
+      document.getElementById("timerHint").textContent = state.timerRunning
+        ? "计时进行中，适合投屏给学生看。"
+        : "可用于限时背诵、抄写、复查或分段冲刺。";
+    }
+
+    function expandTimer() {
+      document.getElementById("timerPanel").classList.remove("compact");
+    }
+
+    function syncTimerFromInputs() {
+      if (state.timerRunning) return;
+      state.timerDuration = timerSecondsFromInputs();
+      state.timerRemaining = state.timerDuration;
+      renderTimer();
+    }
+
+    function stopTimerInterval() {
+      if (state.timerTick) clearInterval(state.timerTick);
+      state.timerTick = null;
+    }
+
+    function tickTimer() {
+      state.timerRemaining = Math.max(0, Math.ceil((state.timerEndAt - Date.now()) / 1000));
+      renderTimer();
+      if (state.timerRemaining <= 0) finishTimer();
+    }
+
+    function startTimer() {
+      expandTimer();
+      if (state.timerRunning) return;
+      if (state.timerRemaining <= 0) {
+        state.timerDuration = timerSecondsFromInputs();
+        state.timerRemaining = state.timerDuration;
+      }
+      if (state.timerRemaining <= 0) {
+        toast("请先设置计时时间");
+        return;
+      }
+      state.timerRunning = true;
+      state.timerEndAt = Date.now() + state.timerRemaining * 1000;
+      stopTimerInterval();
+      state.timerTick = setInterval(tickTimer, 250);
+      playChime("small");
+      renderTimer();
+    }
+
+    function pauseTimer() {
+      if (!state.timerRunning) return;
+      tickTimer();
+      state.timerRunning = false;
+      stopTimerInterval();
+      playChime("soft");
+      renderTimer();
+    }
+
+    function resetTimer() {
+      state.timerRunning = false;
+      stopTimerInterval();
+      state.timerDuration = timerSecondsFromInputs();
+      state.timerRemaining = state.timerDuration;
+      renderTimer();
+    }
+
+    function setTimerPreset(seconds) {
+      expandTimer();
+      state.timerRunning = false;
+      stopTimerInterval();
+      state.timerDuration = seconds;
+      state.timerRemaining = seconds;
+      setTimerInputs(seconds);
+      renderTimer();
+      toast(`计时已设为 ${formatTime(seconds)}`);
+    }
+
+    function finishTimer() {
+      state.timerRunning = false;
+      stopTimerInterval();
+      state.timerRemaining = 0;
+      renderTimer();
+      playChime("grand");
+      particleBurst(null, "module");
+      showCelebration("计时结束", "时间到", "可以收背、检查抄写或进入下一轮抽查。");
+    }
+
+    async function copyMissingList() {
+      const activeGroup = groupById(state.group);
+      const students = activeGroup ? STUDENTS.filter(student => activeGroup.memberIds.includes(student.id)) : STUDENTS;
+      const lines = [];
+      lines.push(activeGroup ? `${groupDisplayName(activeGroup)}未完成名单` : "201班未完成名单");
+      students.forEach(student => {
+        const st = studentStats(student);
+        if (st.unfinished === 0 && st.recheck === 0) return;
+        const missing = st.missing.slice(0, 8).map(item => `${item.id}.${item.title}`).join("、");
+        lines.push(`${student.id}号 ${student.name}：未完成${st.unfinished}项，复查${st.recheck}项；${missing}${st.missing.length > 8 ? "……" : ""}`);
+      });
+      if (lines.length === 1) lines.push("当前范围内没有未完成记录。");
+      try {
+        await navigator.clipboard.writeText(lines.join("\n"));
+        toast("未完成名单已复制");
+      } catch {
+        toast("当前浏览器不允许复制，可用导出备份");
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+        toast("已进入全屏投影");
+      } else {
+        document.exitFullscreen?.();
+      }
+    }
+
+    function exportData() {
+      const payload = {
+        title: "201班二年级下册数学背书实时看板备份",
+        exportedAt: new Date().toISOString(),
+        customItems: state.customItems,
+        records: state.records
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `201班背书看板备份-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    async function copyStateLink() {
+      const payload = { records: state.records, customItems: state.customItems, savedAt: state.savedAt || new Date().toISOString() };
+      const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+      const url = `${location.origin}${location.pathname}#state=${encoded}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        toast("状态链接已复制，可发到手机打开");
+      } catch {
+        toast("当前浏览器不允许复制，请用导出备份");
+      }
+    }
+
+    function importData(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          state.records = data.records || {};
+          state.customItems = normalizeCustomItems(data.customItems);
+          applyCustomItems();
+          save();
+          renderModuleOptions();
+          render();
+          toast("备份已导入");
+        } catch {
+          toast("备份文件无法读取");
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    function copyToRecheck() {
+      let count = 0;
+      Object.keys(state.records).forEach(key => {
+        if (state.records[key].status === "copy") {
+          state.records[key].status = "recheck";
+          state.records[key].updatedAt = new Date().toISOString();
+          count++;
+        }
+      });
+      save();
+      render();
+      toast(`已转入复查 ${count} 项`);
+    }
+
+    function switchView(view) {
+      state.activeView = view;
+      document.querySelectorAll(".tab").forEach(tab => tab.classList.toggle("active", tab.dataset.view === view));
+      document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+      document.getElementById(`${view}View`).classList.add("active");
+    }
+
+    function bindEvents() {
+      document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+        switchView(tab.dataset.view);
+        render();
+      }));
+      document.getElementById("searchInput").addEventListener("input", event => {
+        state.query = event.target.value;
+        render();
+      });
+      document.getElementById("moduleSelect").addEventListener("change", event => {
+        state.module = event.target.value;
+        render();
+      });
+      document.getElementById("groupSelect").addEventListener("change", event => {
+        state.group = event.target.value;
+        render();
+      });
+      document.getElementById("statusSelect").addEventListener("change", event => {
+        state.status = event.target.value;
+        render();
+      });
+      document.getElementById("drawBtn").addEventListener("click", () => drawRandom(false));
+      document.getElementById("reviewDrawBtn").addEventListener("click", drawCompletedReview);
+      document.getElementById("drawFromAlertBtn").addEventListener("click", () => drawRandom(true));
+      document.getElementById("showNeedBtn").addEventListener("click", () => {
+        switchView("alerts");
+        render();
+      });
+      document.getElementById("resetFilterBtn").addEventListener("click", () => {
+        state.query = "";
+        state.module = "all";
+        state.group = "all";
+        document.getElementById("searchInput").value = "";
+        document.getElementById("moduleSelect").value = "all";
+        document.getElementById("groupSelect").value = "all";
+        render();
+      });
+      document.getElementById("closeDrawer").addEventListener("click", closeDrawer);
+      document.getElementById("closeDrawerBottom").addEventListener("click", closeDrawer);
+      document.getElementById("exportBtn").addEventListener("click", exportData);
+      document.getElementById("importBtn").addEventListener("click", () => document.getElementById("importFile").click());
+      document.getElementById("importFile").addEventListener("change", event => {
+        if (event.target.files[0]) importData(event.target.files[0]);
+      });
+      document.getElementById("copyToRecheckBtn").addEventListener("click", copyToRecheck);
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (confirm("确定清空所有登记记录吗？")) {
+          state.records = {};
+          save();
+          render();
+          toast("登记记录已清空");
+        }
+      });
+      document.getElementById("soundBtn").addEventListener("click", () => {
+        state.soundOn = !state.soundOn;
+        save();
+        renderStats();
+        if (state.soundOn) playChime("small");
+      });
+      document.getElementById("copyStateBtn").addEventListener("click", copyStateLink);
+      document.getElementById("copyMissingBtn").addEventListener("click", copyMissingList);
+      document.getElementById("fullscreenBtn").addEventListener("click", toggleFullscreen);
+      document.getElementById("addItemTopBtn").addEventListener("click", openItemEditor);
+      document.getElementById("addItemBtn").addEventListener("click", openItemEditor);
+      document.getElementById("closeItemEditor").addEventListener("click", closeItemEditor);
+      document.getElementById("clearItemForm").addEventListener("click", clearItemForm);
+      document.getElementById("saveNewItem").addEventListener("click", saveNewItem);
+      document.getElementById("itemEditor").addEventListener("click", event => {
+        if (event.target.id === "itemEditor") closeItemEditor();
+      });
+      ["timerHour", "timerMinute", "timerSecond"].forEach(id => {
+        document.getElementById(id).addEventListener("input", syncTimerFromInputs);
+      });
+      document.getElementById("timerPanel").addEventListener("click", event => {
+        if (event.target.closest("button,input,label")) return;
+        expandTimer();
+      });
+      document.getElementById("timerStartBtn").addEventListener("click", startTimer);
+      document.getElementById("timerPauseBtn").addEventListener("click", pauseTimer);
+      document.getElementById("timerResetBtn").addEventListener("click", resetTimer);
+      document.querySelectorAll("[data-timer-preset]").forEach(button => {
+        button.addEventListener("click", () => setTimerPreset(Number(button.dataset.timerPreset)));
+      });
+      document.getElementById("spotClose").addEventListener("click", () => {
+        stopSpotTimer();
+        document.getElementById("spotlight").classList.remove("show");
+      });
+      document.getElementById("spotDone").addEventListener("click", () => spotSet("done"));
+      document.getElementById("spotCopy").addEventListener("click", () => spotSet("copy"));
+      document.getElementById("spotRecheck").addEventListener("click", () => spotSet("recheck"));
+      document.getElementById("spotReveal").addEventListener("click", revealSpotAnswer);
+      document.getElementById("spotNext").addEventListener("click", drawNextSpot);
+      document.getElementById("celebrationClose").addEventListener("click", () => document.getElementById("celebration").classList.remove("show"));
+      document.getElementById("celebrationDraw").addEventListener("click", () => {
+        document.getElementById("celebration").classList.remove("show");
+        drawRandom(false);
+      });
+      document.querySelectorAll("[data-mobile-view]").forEach(button => button.addEventListener("click", () => {
+        switchView(button.dataset.mobileView);
+        render();
+      }));
+      document.getElementById("mobileDraw").addEventListener("click", () => drawRandom(false));
+      document.getElementById("mobileReviewDraw").addEventListener("click", drawCompletedReview);
+    }
+
+    function spotSet(status) {
+      if (!state.activeSpot) return;
+      const picked = state.activeSpot;
+      setStatus(state.activeSpot.student.id, state.activeSpot.item.id, status);
+      document.getElementById("spotHint").textContent = `${picked.student.name} 已登记为“${labelMap[status]}”，可以直接点“${document.getElementById("spotNext").textContent}”继续。`;
+      document.getElementById("spotReveal").style.display = "none";
+      document.getElementById("spotContent").style.display = "none";
+      toast(`${picked.student.name}：${labelMap[status]}`);
+    }
+
+    function render() {
+      renderStats();
+      renderAlerts();
+      renderGroups();
+      renderStudents();
+      renderStatusBoard();
+      renderMatrix();
+      renderItems();
+      renderScreen();
+    }
+
+    load();
+    renderGroupOptions();
+    renderModuleOptions();
+    bindEvents();
+    renderTimer();
+    render();
+  </script>
+</body>
+</html>
