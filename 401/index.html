@@ -2028,6 +2028,12 @@
       return Number.isFinite(remoteTime) && (!Number.isFinite(localTime) || remoteTime > localTime);
     }
 
+    function isLocalNewer(remote) {
+      const remoteTime = Date.parse(remote?.savedAt || "");
+      const localTime = Date.parse(state.savedAt || "");
+      return Number.isFinite(localTime) && (!Number.isFinite(remoteTime) || localTime > remoteTime);
+    }
+
     function scheduleCloudSave() {
       if (!state.cloudApi || state.syncingFromCloud) return;
       clearTimeout(state.cloudSaveTimer);
@@ -2076,6 +2082,8 @@
             applyCloudPayload(remote);
             state.syncingFromCloud = false;
             setSyncMessage("online", "已拉取云端最新记录");
+          } else if (isLocalNewer(remote)) {
+            scheduleCloudSave();
           } else {
             setSyncMessage("online", "云端已连接");
           }
