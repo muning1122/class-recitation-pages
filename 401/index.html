@@ -943,6 +943,264 @@
       line-height: 1.55;
     }
 
+    .workbook-hero {
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) 1fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .workbook-focus {
+      border-radius: var(--radius);
+      padding: 18px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(14,116,144,.98), rgba(37,99,235,.92)),
+        radial-gradient(circle at 12% 0%, rgba(255,255,255,.24), transparent 28%);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .workbook-focus h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .workbook-focus p {
+      margin: 10px 0 0;
+      color: rgba(255,255,255,.82);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    .workbook-stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .score-board {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    .score-tile {
+      border-radius: var(--radius);
+      padding: 14px;
+      color: #102033;
+      border: 1px solid rgba(37,99,235,.14);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(240,249,255,.92)),
+        radial-gradient(circle at 12% 8%, rgba(250,204,21,.25), transparent 30%);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .score-tile strong {
+      display: block;
+      font-size: 28px;
+      margin-top: 6px;
+    }
+
+    .score-tile small {
+      display: block;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 4px;
+    }
+
+    .score-award {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      z-index: 75;
+      background: radial-gradient(circle at 50% 35%, rgba(255,255,255,.28), rgba(15,23,42,.55));
+      backdrop-filter: blur(10px);
+    }
+
+    .score-award.show {
+      display: grid;
+      animation: awardFade .28s ease both;
+    }
+
+    .score-award-card {
+      width: min(760px, calc(100vw - 28px));
+      border-radius: 28px;
+      padding: 34px;
+      text-align: center;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(37,99,235,.96), rgba(14,165,233,.94), rgba(16,185,129,.92)),
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.35), transparent 32%);
+      box-shadow: 0 36px 90px rgba(15,23,42,.42);
+      position: relative;
+      overflow: hidden;
+      animation: awardPop .58s cubic-bezier(.2, 1.5, .28, 1) both;
+    }
+
+    .score-award-card::before,
+    .score-award-card::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.34), transparent 24%);
+      animation: awardSpin 3.8s linear infinite;
+      pointer-events: none;
+    }
+
+    .score-award-card::after {
+      animation-duration: 5.2s;
+      animation-direction: reverse;
+    }
+
+    .score-award-card h2,
+    .score-award-card p,
+    .score-award-card .score-award-points {
+      position: relative;
+      z-index: 1;
+    }
+
+    .score-award-card h2 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
+    }
+
+    .score-award-card p {
+      margin: 12px 0 0;
+      font-size: clamp(18px, 2.4vw, 28px);
+      color: rgba(255,255,255,.9);
+      line-height: 1.45;
+    }
+
+    .score-award-points {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .score-pill {
+      border-radius: 999px;
+      padding: 12px 18px;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.38);
+      font-weight: 900;
+      font-size: clamp(20px, 3vw, 34px);
+    }
+
+    @keyframes awardFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes awardPop {
+      from { transform: translateY(24px) scale(.9); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @keyframes awardSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .workbook-stat {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: rgba(255,255,255,.9);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .workbook-stat strong {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      margin: 8px 0 4px;
+    }
+
+    .workbook-stat span,
+    .workbook-stat small {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .workbook-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 10px;
+    }
+
+    .workbook-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: white;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .workbook-card.complete {
+      border-color: rgba(16,185,129,.55);
+      background: linear-gradient(135deg, rgba(236,253,245,.95), white);
+    }
+
+    .workbook-card h3 {
+      margin: 8px 0 7px;
+      font-size: 18px;
+      line-height: 1.25;
+    }
+
+    .workbook-card p {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .workbook-table .status-btn {
+      width: 34px;
+      height: 34px;
+      font-size: 17px;
+    }
+
+    .workbook-table th {
+      min-width: 98px;
+    }
+
+    .workbook-table .page-range {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .workbook-mini-list {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .workbook-mini-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      background: white;
+    }
+
+    .workbook-mini-row.done {
+      background: #ecfdf5;
+      border-color: rgba(16,185,129,.35);
+    }
+
     .need-list {
       max-height: 88px;
       overflow: auto;
@@ -1357,7 +1615,7 @@
       right: 10px;
       bottom: 10px;
       z-index: 12;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(6, minmax(0, 1fr));
       gap: 6px;
       padding: 8px;
       border-radius: 8px;
@@ -1512,7 +1770,7 @@
       .status-board { grid-template-columns: 1fr; }
       .tabs {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
       }
       .tab {
         padding: 0 6px;
@@ -1538,6 +1796,8 @@
         font-size: 12px;
       }
       .matrix-wrap { max-height: calc(100vh - 230px); }
+      .workbook-hero { grid-template-columns: 1fr; }
+      .workbook-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       th, td { font-size: 12px; padding: 5px; }
     }
   </style>
@@ -1605,6 +1865,7 @@
         <button class="tab" data-view="register">登记台</button>
         <button class="tab" data-view="alerts">提醒台</button>
         <button class="tab" data-view="items">知识点</button>
+        <button class="tab" data-view="workbook">练习册订正</button>
         <button class="tab" data-view="screen">大屏展示</button>
       </div>
       <div class="search">
@@ -1703,6 +1964,59 @@
         </div>
       </section>
 
+      <section class="view" id="workbookView">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>练习册订正检查</h2>
+              <p class="hint">组长按小组检查组员订正情况。订正完并检查通过后点勾，记录会和背书进度一起云端保存。</p>
+            </div>
+            <span class="chip good" id="workbookOverallChip">准备开始</span>
+          </div>
+          <div class="panel-body">
+            <div class="workbook-hero">
+              <div class="workbook-focus">
+                <h2>两节课订正清零</h2>
+                <p>先选小组，再逐个看练习册。没有订正、订正不完整、错题没改好的同学先不打勾，改好后再由组长登记。</p>
+              </div>
+              <div class="workbook-stats" id="workbookStats"></div>
+              <div class="score-board" id="workbookBonusBoard"></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <h2>小组订正比拼</h2>
+            <span class="chip violet">按当前小组筛选登记</span>
+          </div>
+          <div class="panel-body">
+            <div class="workbook-grid" id="workbookGroupGrid"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <h2>组长订正登记表</h2>
+            <div class="chips">
+              <span class="chip violet">上方选择小组</span>
+              <span class="chip good">✓ 订正完成</span>
+              <span class="chip">空白为未检查或未完成</span>
+            </div>
+          </div>
+          <div class="matrix-wrap">
+            <table class="workbook-table" id="workbookTable"></table>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <div class="panel-head">
+            <h2>章节完成情况</h2>
+            <span class="chip" id="workbookSectionChip">10 个章节</span>
+          </div>
+          <div class="panel-body">
+            <div class="workbook-grid" id="workbookSectionGrid"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="screenView">
         <div class="stage">
           <div class="screen-card">
@@ -1770,6 +2084,17 @@
     </div>
   </div>
 
+  <div class="score-award" id="scoreAward">
+    <div class="score-award-card">
+      <h2 id="scoreAwardTitle">订正完成</h2>
+      <p id="scoreAwardText">组长和组员获得加分提醒</p>
+      <div class="score-award-points">
+        <span class="score-pill" id="scoreAwardLeader">组长 +1</span>
+        <span class="score-pill" id="scoreAwardStudent">组员 +2</span>
+      </div>
+    </div>
+  </div>
+
   <div class="item-editor" id="itemEditor">
     <div class="editor-card">
       <div class="panel-head">
@@ -1802,6 +2127,7 @@
     <button class="btn dark" data-mobile-view="overview">看板</button>
     <button class="btn" data-mobile-view="register">登记</button>
     <button class="btn" data-mobile-view="items">知识</button>
+    <button class="btn" data-mobile-view="workbook">订正</button>
     <button class="btn primary" id="mobileDraw">抽查</button>
     <button class="btn good" id="mobileReviewDraw">回抽</button>
   </div>
@@ -1813,6 +2139,19 @@
     const ITEMS = [{"id":1,"module":"四则运算","title":"加减法各部分关系","content":"加数+加数=和；一个加数=和-另一个加数；被减数-减数=差；被减数=差+减数；减数=被减数-差。"},{"id":2,"module":"四则运算","title":"乘除法各部分关系","content":"因数×因数=积；一个因数=积÷另一个因数；被除数÷除数=商；被除数=商×除数；除数=被除数÷商。"},{"id":3,"module":"四则运算","title":"有关0的运算","content":"0加任何数得任何数；任何数减0得原数；0乘任何数得0；0除以非0数得0；0不能作除数。"},{"id":4,"module":"四则运算","title":"含括号混合运算","content":"先算小括号，再算中括号；没有括号时先乘除后加减，同级运算从左往右算。"},{"id":5,"module":"四则运算","title":"租船问题","content":"先按最省的船型估算，再结合人数调整，保证坐满或尽量坐满且总钱数最少。"},{"id":6,"module":"小数","title":"小数的意义与计数单位","content":"原旧表P33。理解一位、两位、三位小数分别表示十分之几、百分之几、千分之几；能说出小数的计数单位。"},{"id":7,"module":"小数","title":"小数的性质与化简改写","content":"原旧表P39。小数末尾添上0或去掉0，小数大小不变；会把小数按要求化简或改写。"},{"id":8,"module":"小数","title":"小数大小比较","content":"原旧表P40。先比较整数部分；整数部分相同，再从十分位起依次比较。"},{"id":9,"module":"小数","title":"小数点移动规律","content":"原旧表P44。小数点向右移动扩大，向左移动缩小；移动一、二、三位分别对应10、100、1000倍。"},{"id":10,"module":"小数","title":"小数的近似数","content":"原旧表P50。按要求保留位数，看下一位；满5向前一位进1，不满5舍去。"},{"id":11,"module":"运算定律","title":"加法交换律、结合律","content":"a+b=b+a；(a+b)+c=a+(b+c)。能说出怎样用来凑整简算。"},{"id":12,"module":"运算定律","title":"减法性质","content":"a-b-c=a-(b+c)；a-(b+c)=a-b-c。能说出连续减两个数可以减去这两个数的和。"},{"id":13,"module":"运算定律","title":"乘法交换律、结合律","content":"a×b=b×a；(a×b)×c=a×(b×c)。能说出怎样改变顺序和分组简算。"},{"id":14,"module":"运算定律","title":"乘法分配律","content":"(a+b)×c=a×c+b×c；(a-b)×c=a×c-b×c。会正用和逆用。"},{"id":15,"module":"运算定律","title":"多项乘法分配律","content":"(a+b+c)×d=a×d+b×d+c×d。会把多个加数分别乘同一个数。"},{"id":16,"module":"小数","title":"小数数位顺序表","content":"整数部分、小数点、小数部分；十分位、百分位、千分位；相邻两个计数单位之间的进率是10。"},{"id":17,"module":"小数","title":"小数的性质","content":"小数末尾添上0或去掉0，小数的大小不变。注意只能是小数末尾。"},{"id":18,"module":"小数","title":"小数大小比较方法","content":"先比较整数部分；整数部分相同，再从十分位起依次比较。"},{"id":19,"module":"小数","title":"小数的近似数方法","content":"按要求保留位数，看下一位；满5向前一位进1，不满5舍去。"},{"id":20,"module":"小数","title":"小数点移动规律复背","content":"小数点向右移动一、二、三位，小数扩大到原来的10、100、1000倍；向左移动则缩小到原来的1/10、1/100、1/1000。"},{"id":21,"module":"单位换算","title":"重量单位换算","content":"1吨=1000千克；1千克=1000克。高级单位化低级单位乘进率，低级单位化高级单位除以进率。"},{"id":22,"module":"单位换算","title":"长度单位换算","content":"1千米=1000米；1米=10分米=100厘米；1分米=10厘米；1厘米=10毫米。"},{"id":23,"module":"单位换算","title":"面积单位换算","content":"1平方千米=100公顷；1公顷=10000平方米；1平方米=100平方分米；1平方分米=100平方厘米。"},{"id":24,"module":"单位换算","title":"人民币单位换算","content":"1元=10角；1角=10分；1元=100分。"},{"id":25,"module":"单位换算","title":"时间单位换算","content":"1日=24时；1时=60分；1分=60秒；1周=7日。"},{"id":26,"module":"小数加减法","title":"小数加减法计算方法","content":"小数点对齐，也就是相同数位对齐；从低位算起，得数的小数点和横线上的小数点对齐。"},{"id":27,"module":"三角形","title":"三角形的特性","content":"三角形有3条边、3个角、3个顶点，具有稳定性。"},{"id":28,"module":"三角形","title":"三角形三边关系","content":"三角形任意两边的和大于第三边；任意两边的差小于第三边。"},{"id":29,"module":"三角形","title":"三角形分类","content":"按角分：锐角三角形、直角三角形、钝角三角形；按边分：不等边、等腰、等边三角形。"},{"id":30,"module":"三角形","title":"三角形内角和","content":"三角形三个内角的和是180°。"},{"id":31,"module":"多边形","title":"多边形内角和","content":"n边形内角和=(n-2)×180°。四边形360°，五边形540°，六边形720°。"}];
 
     const BASE_ITEM_COUNT = ITEMS.length;
+
+    const WORKBOOK_SECTIONS = [
+      { id: 1, unit: "第一单元", title: "四则运算", pages: "1-9页", note: "先检查错题是否订正完整，再看关键步骤是否补齐。" },
+      { id: 2, unit: "第二单元", title: "观察物体（二）", pages: "12-17页", note: "重点看观察方向和图形对应是否改正。" },
+      { id: 3, unit: "第三单元", title: "运算律", pages: "21-33页", note: "重点看简算过程、运算律名称和等号书写。" },
+      { id: 4, unit: "第四单元", title: "小数的意义和性质", pages: "36-61页", note: "页数多，优先查小数性质、单位换算和近似数订正。" },
+      { id: 5, unit: "第五单元", title: "三角形", pages: "65-70页", note: "看三边关系、分类、内角和是否订正到位。" },
+      { id: 6, unit: "第六单元", title: "小数的加法和减法", pages: "73-85页", note: "重点看小数点对齐、退位进位和竖式格式。" },
+      { id: 7, unit: "第七单元", title: "图形的运动（二）", pages: "89-92页", note: "看平移、轴对称和画图痕迹是否补齐。" },
+      { id: 8, unit: "第八单元", title: "平均数与条形统计图", pages: "95-97页", note: "看平均数计算和统计图信息是否订正。" },
+      { id: 9, unit: "第九单元", title: "鸡兔同笼", pages: "100-102页", note: "看假设法、列表法和答句是否补完整。" },
+      { id: 10, unit: "总复习", title: "总复习", pages: "105-111页", note: "综合检查，错题订正后适合二次批改。" }
+    ];
 
     const GROUPS = [
       { id: "g2", leaderId: 2, range: "1-7号", memberIds: [1, 2, 3, 4, 5, 6, 7] },
@@ -1840,6 +2179,8 @@
     };
     const state = {
       records: {},
+      workbookRecords: {},
+      workbookAwards: {},
       activeView: "overview",
       query: "",
       module: "all",
@@ -1855,6 +2196,7 @@
       timerRunning: false,
       timerEndAt: null,
       timerTick: null,
+      scoreAwardTimer: null,
       savedAt: null,
       soundOn: true,
       syncState: "local",
@@ -1886,6 +2228,22 @@
 
     function getStatus(studentId, itemId) {
       return state.records[keyOf(studentId, itemId)]?.status || "none";
+    }
+
+    function workbookKeyOf(studentId, sectionId) {
+      return String(studentId) + "-" + sectionId;
+    }
+
+    function getWorkbookDone(studentId, sectionId) {
+      return Boolean(state.workbookRecords[workbookKeyOf(studentId, sectionId)]?.done);
+    }
+
+    function workbookAwardKey(studentId) {
+      return String(studentId);
+    }
+
+    function hasWorkbookAward(studentId) {
+      return Boolean(state.workbookAwards[workbookAwardKey(studentId)]);
     }
 
     function sanitizeText(text, fallback = "") {
@@ -1989,6 +2347,8 @@
       return {
         classId: CLOUD_SYNC.classId,
         records: state.records,
+        workbookRecords: state.workbookRecords,
+        workbookAwards: state.workbookAwards,
         customItems: state.customItems,
         savedAt: state.savedAt || new Date().toISOString(),
         syncVersion: 1
@@ -1998,6 +2358,8 @@
     function persistLocal() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         records: state.records,
+        workbookRecords: state.workbookRecords,
+        workbookAwards: state.workbookAwards,
         customItems: state.customItems,
         savedAt: state.savedAt,
         soundOn: state.soundOn
@@ -2007,6 +2369,8 @@
     function applyCloudPayload(data) {
       if (!data || typeof data !== "object") return false;
       state.records = data.records || {};
+      state.workbookRecords = data.workbookRecords || {};
+      state.workbookAwards = data.workbookAwards || {};
       state.customItems = normalizeCustomItems(data.customItems);
       applyCustomItems();
       state.savedAt = data.savedAt || new Date().toISOString();
@@ -2257,6 +2621,8 @@
           const encoded = location.hash.slice(7);
           const decoded = JSON.parse(decodeURIComponent(escape(atob(encoded))));
           state.records = decoded.records || {};
+          state.workbookRecords = decoded.workbookRecords || {};
+          state.workbookAwards = decoded.workbookAwards || {};
           state.customItems = normalizeCustomItems(decoded.customItems);
           applyCustomItems();
           state.savedAt = decoded.savedAt || new Date().toISOString();
@@ -2268,12 +2634,16 @@
         if (!raw) return;
         const data = JSON.parse(raw);
         state.records = data.records || {};
+        state.workbookRecords = data.workbookRecords || {};
+        state.workbookAwards = data.workbookAwards || {};
         state.customItems = normalizeCustomItems(data.customItems);
         applyCustomItems();
         state.savedAt = data.savedAt || null;
         state.soundOn = data.soundOn !== false;
       } catch {
         state.records = {};
+        state.workbookRecords = {};
+        state.workbookAwards = {};
         state.customItems = [];
         applyCustomItems();
       }
@@ -2402,6 +2772,186 @@
       const finished = done + copy;
       const percent = Math.round(finished / STUDENTS.length * 100);
       return { done, copy, recheck, missing, finished, percent, unfinished: STUDENTS.length - finished };
+    }
+
+    function workbookStudents() {
+      return STUDENTS.filter(student => studentGroup(student.id));
+    }
+
+    function workbookStudentStats(student) {
+      const doneSections = WORKBOOK_SECTIONS.filter(section => getWorkbookDone(student.id, section.id));
+      const missing = WORKBOOK_SECTIONS.filter(section => !getWorkbookDone(student.id, section.id));
+      const done = doneSections.length;
+      const total = WORKBOOK_SECTIONS.length;
+      const percent = total ? Math.round(done / total * 100) : 0;
+      return { done, total, missing, doneSections, unfinished: total - done, percent };
+    }
+
+    function workbookStats() {
+      const students = workbookStudents();
+      const total = students.length * WORKBOOK_SECTIONS.length;
+      const done = students.reduce((sum, student) => sum + workbookStudentStats(student).done, 0);
+      const unfinished = Math.max(0, total - done);
+      const percent = total ? Math.round(done / total * 100) : 0;
+      return { students, total, done, unfinished, percent };
+    }
+
+    function workbookAwardEntries() {
+      return Object.values(state.workbookAwards)
+        .filter(entry => entry && entry.studentId && studentGroup(entry.studentId))
+        .map(entry => {
+          const student = STUDENTS.find(item => item.id === entry.studentId);
+          const group = studentGroup(entry.studentId);
+          const leader = group ? STUDENTS.find(item => item.id === group.leaderId) : null;
+          return { ...entry, student, group, leader };
+        })
+        .filter(entry => entry.student && entry.group && entry.leader);
+    }
+
+    function workbookBonusStats() {
+      const entries = workbookAwardEntries();
+      const leaderScores = {};
+      entries.forEach(entry => {
+        leaderScores[entry.group.leaderId] = (leaderScores[entry.group.leaderId] || 0) + 1;
+      });
+      return {
+        entries,
+        leaderScores,
+        leaderPoints: entries.length,
+        studentPoints: entries.length * 2,
+        totalPoints: entries.length * 3
+      };
+    }
+
+    function workbookSectionStats(section) {
+      const students = workbookStudents();
+      const doneStudents = students.filter(student => getWorkbookDone(student.id, section.id));
+      const missing = students.filter(student => !getWorkbookDone(student.id, section.id));
+      const percent = students.length ? Math.round(doneStudents.length / students.length * 100) : 0;
+      return { section, done: doneStudents.length, total: students.length, missing, percent, unfinished: missing.length };
+    }
+
+    function workbookGroupStats(group) {
+      const members = STUDENTS.filter(student => group.memberIds.includes(student.id));
+      const memberRows = members.map(student => ({ student, ...workbookStudentStats(student) }));
+      const total = members.length * WORKBOOK_SECTIONS.length;
+      const done = memberRows.reduce((sum, row) => sum + row.done, 0);
+      const unfinished = Math.max(0, total - done);
+      const percent = total ? Math.round(done / total * 100) : 0;
+      const lagging = memberRows
+        .filter(row => row.unfinished > 0)
+        .sort((a, b) => b.unfinished - a.unfinished)
+        .slice(0, 4);
+      return { group, members, memberRows, done, unfinished, total, percent, lagging };
+    }
+
+    function snapshotWorkbookProgress(studentId, sectionId) {
+      const student = STUDENTS.find(item => item.id === studentId);
+      const section = WORKBOOK_SECTIONS.find(item => item.id === sectionId);
+      const studentSnapshot = workbookStudentStats(student);
+      const sectionSnapshot = workbookSectionStats(section);
+      const group = studentGroup(studentId);
+      const groupSnapshot = group ? workbookGroupStats(group) : null;
+      return {
+        student,
+        section,
+        studentAllDone: studentSnapshot.unfinished === 0,
+        sectionDone: sectionSnapshot.unfinished === 0,
+        group,
+        groupPercent: groupSnapshot ? groupSnapshot.percent : 0,
+        groupAllDone: groupSnapshot ? groupSnapshot.unfinished === 0 : false
+      };
+    }
+
+    function setWorkbookDone(studentId, sectionId, done) {
+      const before = snapshotWorkbookProgress(studentId, sectionId);
+      const key = workbookKeyOf(studentId, sectionId);
+      if (done) {
+        state.workbookRecords[key] = { done: true, updatedAt: new Date().toISOString() };
+      } else {
+        delete state.workbookRecords[key];
+      }
+      save();
+      render();
+      if (state.selectedStudent?.id === studentId && document.getElementById("drawer").classList.contains("open")) {
+        openStudent(studentId);
+      }
+      rewardWorkbookIfNeeded(studentId, sectionId, done, before);
+    }
+
+    function toggleWorkbookDone(studentId, sectionId) {
+      setWorkbookDone(studentId, sectionId, !getWorkbookDone(studentId, sectionId));
+    }
+
+    function rewardWorkbookIfNeeded(studentId, sectionId, done, before) {
+      const button = document.querySelector('[data-workbook="' + studentId + '-' + sectionId + '"]');
+      if (button) {
+        button.classList.add("pop");
+        setTimeout(() => button.classList.remove("pop"), 430);
+      }
+      if (!done) {
+        playChime("clear");
+        toast("已取消这项订正登记");
+        return;
+      }
+      const after = snapshotWorkbookProgress(studentId, sectionId);
+      playChime("done");
+      particleBurst(button, "small");
+      toast(after.student.name + " 完成「" + after.section.unit + "」练习册订正");
+      if (!before.sectionDone && after.sectionDone) {
+        setTimeout(() => {
+          playChime("module");
+          particleBurst(null, "module");
+          showCelebration("章节订正清零", after.section.unit + " " + after.section.title, "这一章全班订正检查完成，可以进入二次批改。", "module");
+        }, 260);
+      }
+      if (!before.studentAllDone && after.studentAllDone) {
+        const firstAward = after.group && !hasWorkbookAward(studentId);
+        if (firstAward) {
+          state.workbookAwards[workbookAwardKey(studentId)] = {
+            studentId,
+            leaderId: after.group.leaderId,
+            groupId: after.group.id,
+            awardedAt: new Date().toISOString(),
+            leaderPoints: 1,
+            studentPoints: 2
+          };
+          save();
+          render();
+          showScoreAward(after.student, after.group);
+        }
+        setTimeout(() => {
+          playChime("grand");
+          particleBurst(null, "grand");
+          showCelebration("练习册订正完成", after.student.name + " 10个章节全部清零", firstAward ? "组长 +1 分，组员 +2 分，记得到班级优化大师手动加上。" : "这名同学已经登记过加分，本次不重复计分。", "grand");
+        }, 520);
+      }
+      if (after.group && !before.groupAllDone && after.groupAllDone) {
+        setTimeout(() => {
+          playChime("grand");
+          particleBurst(null, "grand");
+          showCelebration("小组订正完成", groupDisplayName(after.group) + " 全组清零", groupLeaderLabel(after.group) + "负责的" + after.group.range + "练习册订正已经完成。", "grand");
+        }, 820);
+      } else if (after.group && after.groupPercent > before.groupPercent) {
+        const milestone = [80, 50].find(mark => before.groupPercent < mark && after.groupPercent >= mark);
+        if (milestone) {
+          setTimeout(() => toast(groupDisplayName(after.group) + " 练习册订正达到 " + after.groupPercent + "%"), 360);
+        }
+      }
+    }
+
+    function showScoreAward(student, group) {
+      const leader = STUDENTS.find(item => item.id === group.leaderId);
+      const overlay = document.getElementById("scoreAward");
+      document.getElementById("scoreAwardTitle").textContent = "订正清零，加分提醒";
+      document.getElementById("scoreAwardText").textContent = student.id + "号 " + student.name + " 完成练习册订正检查";
+      document.getElementById("scoreAwardLeader").textContent = leader.id + "号 " + leader.name + " 组长 +1";
+      document.getElementById("scoreAwardStudent").textContent = student.id + "号 " + student.name + " 组员 +2";
+      overlay.classList.add("show");
+      playChime("module");
+      particleBurst(null, "grand");
+      clearTimeout(state.scoreAwardTimer);
+      state.scoreAwardTimer = setTimeout(() => overlay.classList.remove("show"), 4300);
     }
 
     function filteredStudents() {
@@ -2542,6 +3092,7 @@
       document.getElementById("studentCountChip").textContent = `${students.length} 名学生`;
       document.getElementById("studentGrid").innerHTML = students.map(student => {
         const st = studentStats(student);
+        const wb = workbookStudentStats(student);
         const group = studentGroup(student.id);
         const groupBadge = group ? `<span class="chip violet">登记：${groupLeaderLabel(group)}</span>` : `<span class="chip">测试账号</span>`;
         const missingModules = [...new Set(st.missing.slice(0, 6).map(item => item.module))];
@@ -2553,6 +3104,7 @@
               ${groupBadge}
               <span class="chip good">${st.percent}%</span>
               <span class="chip">${st.finished}/${ITEMS.length}</span>
+              <span class="chip ${wb.percent === 100 ? "good" : "violet"}">订正${wb.done}/${wb.total}</span>
               ${st.copy ? `<span class="chip warn">抄写${st.copy}</span>` : ""}
               ${st.recheck ? `<span class="chip red">复查${st.recheck}</span>` : ""}
               ${missingModules.map(module => `<span class="chip violet">${module}</span>`).join("")}
@@ -2637,6 +3189,133 @@
       }).join("");
     }
 
+    function renderWorkbook() {
+      const s = workbookStats();
+      document.getElementById("workbookOverallChip").textContent = s.total ? `${s.done}/${s.total} · ${s.percent}%` : "准备开始";
+      const blocks = [
+        ["订正完成率", `${s.percent}%`, `${s.done}/${s.total} 项`],
+        ["已检查完成", s.done, "组长已打勾"],
+        ["还要处理", s.unfinished, "未订正或未检查"],
+        ["章节范围", WORKBOOK_SECTIONS.length, "按10个单元推进"]
+      ];
+  document.getElementById("workbookStats").innerHTML = blocks.map(([label, value, sub]) => `
+    <div class="workbook-stat">
+      <span>${label}</span>
+      <strong>${value}</strong>
+      <small>${sub}</small>
+    </div>
+  `).join("");
+
+  const bonus = workbookBonusStats();
+  const topLeaders = Object.entries(bonus.leaderScores)
+    .map(([leaderId, score]) => ({ leader: STUDENTS.find(student => student.id === Number(leaderId)), score }))
+    .filter(entry => entry.leader)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 4);
+  document.getElementById("workbookBonusBoard").innerHTML = `
+    <div class="score-tile">
+      <span>班级优化大师待加</span>
+      <strong>+${bonus.totalPoints}</strong>
+      <small>组长 +${bonus.leaderPoints}，组员 +${bonus.studentPoints}</small>
+    </div>
+    <div class="score-tile">
+      <span>已触发奖励</span>
+      <strong>${bonus.entries.length}人</strong>
+      <small>每名组员整本订正完成后只计一次。</small>
+    </div>
+    <div class="score-tile">
+      <span>组长加分榜</span>
+      <strong>${topLeaders[0] ? topLeaders[0].score + "分" : "0分"}</strong>
+      <small>${topLeaders.length ? topLeaders.map(entry => entry.leader.id + "号" + entry.leader.name + "+" + entry.score).join("、") : "完成整名组员检查后自动显示。"}</small>
+    </div>
+  `;
+
+  const groupEntries = GROUPS
+        .map(group => workbookGroupStats(group))
+        .sort((a, b) => b.percent - a.percent || a.group.leaderId - b.group.leaderId);
+      document.getElementById("workbookGroupGrid").innerHTML = groupEntries.map((entry, index) => {
+        const missingNames = entry.lagging.map(row => `${row.student.id}号${row.student.name}`);
+        return `
+          <article class="workbook-card ${entry.unfinished === 0 ? "complete" : ""}">
+            <span class="chip violet">第${index + 1} · ${entry.group.range}</span>
+            <h3>${groupDisplayName(entry.group)}</h3>
+            <p>${groupLeaderLabel(entry.group)}负责检查。${missingNames.length ? `重点看：${missingNames.join("、")}` : "全组订正状态很漂亮。"}</p>
+            <div class="bar"><i style="width:${entry.percent}%"></i></div>
+            <div class="chips" style="margin-top:8px">
+              <span class="chip good">${entry.percent}%</span>
+              <span class="chip">${entry.done}/${entry.total}</span>
+              <span class="chip ${entry.unfinished ? "red" : "good"}">${entry.unfinished ? `未完成 ${entry.unfinished}` : "全组完成"}</span>
+            </div>
+            <div style="margin-top:10px"><button class="btn" onclick="focusWorkbookGroup('${entry.group.id}')">登记本组</button></div>
+          </article>
+        `;
+      }).join("");
+
+      const activeGroup = groupById(state.group);
+      const q = state.query.trim();
+      const students = workbookStudents().filter(student => {
+        const matchesGroup = !activeGroup || activeGroup.memberIds.includes(student.id);
+        const matchesText = !q || student.name.includes(q) || String(student.id) === q;
+        return matchesGroup && matchesText;
+      });
+      let html = "<thead><tr><th class='sticky'>号</th><th class='name'>姓名</th>";
+      html += WORKBOOK_SECTIONS.map(section => `<th title="${section.unit}：${section.title}｜${section.pages}"><span class="col-id">${section.id}</span><span class="col-title">${section.unit}</span><span class="page-range">${section.pages}</span></th>`).join("");
+      html += "<th>完成</th></tr></thead><tbody>";
+      html += students.map(student => {
+        const st = workbookStudentStats(student);
+        const cells = WORKBOOK_SECTIONS.map(section => {
+          const done = getWorkbookDone(student.id, section.id);
+          return `<td><button class="status-btn ${done ? "done" : "none"}" data-workbook="${student.id}-${section.id}" title="${section.unit} ${section.title}：${done ? "订正完成" : "未完成"}" onclick="toggleWorkbookDone(${student.id}, ${section.id})">${done ? "✓" : ""}</button></td>`;
+        }).join("");
+        return `<tr><td class="sticky">${student.id}</td><td class="name"><button class="chip" onclick="openStudent(${student.id})">${student.name}</button></td>${cells}<td>${st.done}/${st.total}</td></tr>`;
+      }).join("");
+      html += "</tbody>";
+      document.getElementById("workbookTable").innerHTML = html;
+
+      document.getElementById("workbookSectionChip").textContent = `${WORKBOOK_SECTIONS.length} 个章节 · ${s.percent}%`;
+      document.getElementById("workbookSectionGrid").innerHTML = WORKBOOK_SECTIONS.map(section => {
+        const st = workbookSectionStats(section);
+        return `
+          <article class="workbook-card ${st.unfinished === 0 ? "complete" : ""}">
+            <span class="chip violet">${section.unit} · ${section.pages}</span>
+            <h3>${section.title}</h3>
+            <p>${section.note}</p>
+            <div class="bar"><i style="width:${st.percent}%"></i></div>
+            <div class="chips" style="margin-top:8px">
+              <span class="chip good">${st.percent}%</span>
+              <span class="chip">${st.done}/${st.total}</span>
+              <span class="chip ${st.unfinished ? "red" : "good"}">${st.unfinished ? `未完成 ${st.unfinished}` : "本章清零"}</span>
+            </div>
+            <div class="need-list" style="margin-top:8px">
+              ${st.missing.slice(0, 12).map(student => `<button class="chip" onclick="openStudent(${student.id})">${student.name}</button>`).join("")}
+              ${st.missing.length > 12 ? `<span class="chip">另 ${st.missing.length - 12} 人</span>` : ""}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderWorkbookStudentPanel(student) {
+      const wb = workbookStudentStats(student);
+      return `
+        <div class="leader-section-title">练习册订正 ${wb.done}/${wb.total}</div>
+        <div class="workbook-mini-list">
+          ${WORKBOOK_SECTIONS.map(section => {
+            const done = getWorkbookDone(student.id, section.id);
+            return `
+              <div class="workbook-mini-row ${done ? "done" : ""}">
+                <div>
+                  <strong>${section.unit} ${section.title}</strong>
+                  <small>${section.pages} · ${section.note}</small>
+                </div>
+                <button class="mini ${done ? "done" : ""}" data-workbook="${student.id}-${section.id}" onclick="toggleWorkbookDone(${student.id}, ${section.id})">${done ? "已完成" : "打勾"}</button>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
     function renderScreen() {
       const groupLeaders = GROUPS
         .map(group => groupStats(group))
@@ -2671,6 +3350,7 @@
       state.selectedStudent = STUDENTS.find(student => student.id === studentId);
       const student = state.selectedStudent;
       const st = studentStats(student);
+      const wb = workbookStudentStats(student);
       const group = studentGroup(student.id);
       const groupChip = group
         ? `<span class="chip violet">${groupDisplayName(group)} · ${group.range} · ${groupLeaderLabel(group)}登记</span>`
@@ -2680,6 +3360,7 @@
         ${groupChip}
         <span class="chip good">完成 ${st.finished}</span>
         <span class="chip red">未完成 ${st.unfinished}</span>
+        <span class="chip ${wb.percent === 100 ? "good" : "violet"}">练习册订正 ${wb.done}/${wb.total}</span>
         <span class="chip warn">抄写 ${st.copy}</span>
         <span class="chip red">复查 ${st.recheck}</span>
       `;
@@ -2689,7 +3370,7 @@
         ["copy", "抄写补上"],
         ["done", "已背过"]
       ];
-      document.getElementById("drawerBody").innerHTML = groups.map(([statusKey, title]) => {
+      document.getElementById("drawerBody").innerHTML = renderWorkbookStudentPanel(student) + groups.map(([statusKey, title]) => {
         const list = ITEMS.filter(item => getStatus(student.id, item.id) === statusKey);
         return `
           <div class="leader-section-title">${title} ${list.length}</div>
@@ -2737,6 +3418,18 @@
       switchView("register");
       render();
       toast(`${groupDisplayName(group)}：登记台已只显示${group.range}成员`);
+    }
+
+    function focusWorkbookGroup(groupId) {
+      const group = groupById(groupId);
+      if (!group) return;
+      state.group = groupId;
+      state.query = "";
+      document.getElementById("searchInput").value = "";
+      document.getElementById("groupSelect").value = groupId;
+      switchView("workbook");
+      render();
+      toast(`${groupDisplayName(group)}：练习册订正表已只显示${group.range}成员`);
     }
 
     function hideSpotAnswer(text = "先让学生背，背完再点“显示答案”核对。") {
@@ -3293,7 +3986,9 @@
         title: "401班四年级下册数学背书实时看板备份",
         exportedAt: new Date().toISOString(),
         customItems: state.customItems,
-        records: state.records
+        records: state.records,
+        workbookRecords: state.workbookRecords,
+        workbookAwards: state.workbookAwards
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
@@ -3305,7 +4000,7 @@
     }
 
     async function copyStateLink() {
-      const payload = { records: state.records, customItems: state.customItems, savedAt: state.savedAt || new Date().toISOString() };
+      const payload = { records: state.records, workbookRecords: state.workbookRecords, workbookAwards: state.workbookAwards, customItems: state.customItems, savedAt: state.savedAt || new Date().toISOString() };
       const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
       const url = `${location.origin}${location.pathname}#state=${encoded}`;
       try {
@@ -3322,6 +4017,8 @@
         try {
           const data = JSON.parse(reader.result);
           state.records = data.records || {};
+          state.workbookRecords = data.workbookRecords || {};
+          state.workbookAwards = data.workbookAwards || {};
           state.customItems = normalizeCustomItems(data.customItems);
           applyCustomItems();
           save();
@@ -3404,6 +4101,8 @@
       document.getElementById("resetBtn").addEventListener("click", () => {
         if (confirm("确定清空所有登记记录吗？")) {
           state.records = {};
+          state.workbookRecords = {};
+          state.workbookAwards = {};
           save();
           render();
           toast("登记记录已清空");
@@ -3449,6 +4148,7 @@
       document.getElementById("spotReveal").addEventListener("click", revealSpotAnswer);
       document.getElementById("spotNext").addEventListener("click", drawNextSpot);
       document.getElementById("celebrationClose").addEventListener("click", () => document.getElementById("celebration").classList.remove("show"));
+      document.getElementById("scoreAward").addEventListener("click", () => document.getElementById("scoreAward").classList.remove("show"));
       document.getElementById("celebrationDraw").addEventListener("click", () => {
         document.getElementById("celebration").classList.remove("show");
         drawRandom(false);
@@ -3479,6 +4179,7 @@
       renderStatusBoard();
       renderMatrix();
       renderItems();
+      renderWorkbook();
       renderScreen();
     }
 
