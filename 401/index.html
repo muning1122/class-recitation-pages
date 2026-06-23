@@ -1433,6 +1433,61 @@
       gap: 12px;
     }
 
+    .action-log-card {
+      width: min(920px, 100%);
+    }
+
+    .action-log-list {
+      max-height: min(64vh, 560px);
+      overflow: auto;
+      display: grid;
+      gap: 8px;
+    }
+
+    .action-log-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 10px;
+      padding: 11px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(135deg, #f8fbff, #ffffff);
+    }
+
+    .action-log-time {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .action-log-main {
+      display: grid;
+      gap: 4px;
+      line-height: 1.45;
+    }
+
+    .action-log-main strong {
+      font-size: 14px;
+    }
+
+    .action-log-main small {
+      color: var(--muted);
+    }
+
+    .action-log-op {
+      font-weight: 900;
+      color: var(--blue);
+    }
+
+    .action-log-empty {
+      padding: 22px;
+      border: 1px dashed var(--line);
+      border-radius: 8px;
+      text-align: center;
+      color: var(--muted);
+      background: #f8fafc;
+    }
+
     .form-row {
       display: grid;
       gap: 6px;
@@ -1767,6 +1822,7 @@
       .app { padding: 10px 10px 78px; }
       .mobile-quick { display: grid; }
       .sync-row, .mode-strip { grid-template-columns: 1fr; }
+      .action-log-row { grid-template-columns: 1fr; }
       .student-grid { grid-template-columns: 1fr; }
       .status-board { grid-template-columns: 1fr; }
       .tabs {
@@ -1824,6 +1880,7 @@
           <button class="btn good" id="soundBtn">音效开启</button>
           <button class="btn" id="copyStateBtn">复制状态链接</button>
           <button class="btn primary" id="addItemTopBtn">新增知识点</button>
+          <button class="btn" id="actionLogBtn">登记记录</button>
           <button class="btn" id="copyMissingBtn">复制未完名单</button>
           <button class="btn dark" id="fullscreenBtn">全屏投影</button>
         </div>
@@ -2124,6 +2181,22 @@
     </div>
   </div>
 
+  <div class="item-editor" id="actionLogViewer">
+    <div class="editor-card action-log-card">
+      <div class="panel-head">
+        <h2>登记记录</h2>
+        <div class="filters">
+          <button class="btn" id="copyActionLogBtn">复制记录</button>
+          <button class="btn" id="closeActionLogViewer">关闭</button>
+        </div>
+      </div>
+      <div class="editor-body">
+        <p class="hint">只记录知识点登记操作，最多保留最近500条，并随云端同步。</p>
+        <div class="action-log-list" id="actionLogList"></div>
+      </div>
+    </div>
+  </div>
+
   <div class="mobile-quick">
     <button class="btn dark" data-mobile-view="overview">看板</button>
     <button class="btn" data-mobile-view="register">登记</button>
@@ -2193,6 +2266,7 @@
       lastDrawMode: "random",
       drawHistory: [],
       customItems: [],
+      actionLogs: [],
       timerDuration: 300,
       timerRemaining: 300,
       timerRunning: false,
@@ -2209,6 +2283,8 @@
       cloudApi: null,
       remoteLoaded: false
     };
+
+    const ACTION_LOG_LIMIT = 500;
 
     const labelMap = {
       none: "",
@@ -2270,6 +2346,49 @@
         .filter(item => item.title && item.content);
     }
 
+    function normalizeActionLogs(logs) {
+      return (Array.isArray(logs) ? logs : [])
+        .map(log => ({
+          id: String(log.id || `${log.at || Date.now()}-${log.studentId || 0}-${log.itemId || 0}`),
+          at: log.at || new Date().toISOString(),
+          studentId: Number(log.studentId) || 0,
+          studentName: sanitizeText(log.studentName, "未知学生"),
+          itemId: Number(log.itemId) || 0,
+          itemTitle: sanitizeText(log.itemTitle, "未知知识点"),
+          itemModule: sanitizeText(log.itemModule, "知识点"),
+          fromStatus: log.fromStatus || "none",
+          toStatus: log.toStatus || "none"
+        }))
+        .filter(log => log.studentId && log.itemId)
+        .slice(-ACTION_LOG_LIMIT);
+    }
+
+    function statusName(status) {
+      return ({ none: "未登记", done: "已背", copy: "抄写", recheck: "复查" })[status] || "未知";
+    }
+
+    function operationName(status) {
+      return ({ none: "清空", done: "已背", copy: "抄写", recheck: "复查" })[status] || statusName(status);
+    }
+
+    function recordActionLog(student, item, fromStatus, toStatus) {
+      if (!student || !item || fromStatus === toStatus) return;
+      state.actionLogs = normalizeActionLogs([...(state.actionLogs || []), {
+        id: `${Date.now()}-${student.id}-${item.id}-${Math.random().toString(36).slice(2, 8)}`,
+        at: new Date().toISOString(),
+        studentId: student.id,
+        studentName: student.name,
+        itemId: item.id,
+        itemTitle: item.title,
+        itemModule: item.module,
+        fromStatus,
+        toStatus
+      }]);
+      if (document.getElementById("actionLogViewer")?.classList.contains("show")) {
+        renderActionLogs();
+      }
+    }
+
     function nextCustomItemId() {
       const ids = ITEMS.map(item => Number(item.id)).filter(Boolean);
       return Math.max(1000, ...ids) + 1;
@@ -2319,7 +2438,9 @@
 
     function setStatus(studentId, itemId, status) {
       const before = snapshotProgress(studentId, itemId);
+      const previousStatus = getStatus(studentId, itemId);
       const key = keyOf(studentId, itemId);
+      recordActionLog(before.student, before.target, previousStatus, status);
       if (status === "none") {
         delete state.records[key];
       } else {
@@ -2352,6 +2473,7 @@
         workbookRecords: state.workbookRecords,
         workbookAwards: state.workbookAwards,
         customItems: state.customItems,
+        actionLogs: state.actionLogs,
         savedAt: state.savedAt || new Date().toISOString(),
         syncVersion: 1
       };
@@ -2363,6 +2485,7 @@
         workbookRecords: state.workbookRecords,
         workbookAwards: state.workbookAwards,
         customItems: state.customItems,
+        actionLogs: state.actionLogs,
         savedAt: state.savedAt,
         soundOn: state.soundOn
       }));
@@ -2374,6 +2497,7 @@
       state.workbookRecords = data.workbookRecords || {};
       state.workbookAwards = data.workbookAwards || {};
       state.customItems = normalizeCustomItems(data.customItems);
+      state.actionLogs = normalizeActionLogs(data.actionLogs);
       applyCustomItems();
       state.savedAt = data.savedAt || new Date().toISOString();
       persistLocal();
@@ -2626,6 +2750,7 @@
           state.workbookRecords = decoded.workbookRecords || {};
           state.workbookAwards = decoded.workbookAwards || {};
           state.customItems = normalizeCustomItems(decoded.customItems);
+          state.actionLogs = normalizeActionLogs(decoded.actionLogs);
           applyCustomItems();
           state.savedAt = decoded.savedAt || new Date().toISOString();
           persistLocal();
@@ -2639,6 +2764,7 @@
         state.workbookRecords = data.workbookRecords || {};
         state.workbookAwards = data.workbookAwards || {};
         state.customItems = normalizeCustomItems(data.customItems);
+        state.actionLogs = normalizeActionLogs(data.actionLogs);
         applyCustomItems();
         state.savedAt = data.savedAt || null;
         state.soundOn = data.soundOn !== false;
@@ -2647,6 +2773,7 @@
         state.workbookRecords = {};
         state.workbookAwards = {};
         state.customItems = [];
+        state.actionLogs = [];
         applyCustomItems();
       }
     }
@@ -3925,6 +4052,72 @@
       toast(`已新增：${item.title}`);
     }
 
+    function formatActionLogTime(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "时间未知";
+      return date.toLocaleString("zh-CN", { hour12: false });
+    }
+
+    function renderActionLogs() {
+      const list = document.getElementById("actionLogList");
+      if (!list) return;
+      list.innerHTML = "";
+      const logs = normalizeActionLogs(state.actionLogs).slice().reverse();
+      if (!logs.length) {
+        const empty = document.createElement("div");
+        empty.className = "action-log-empty";
+        empty.textContent = "暂无登记记录。";
+        list.appendChild(empty);
+        return;
+      }
+      logs.forEach(log => {
+        const row = document.createElement("div");
+        row.className = "action-log-row";
+        const time = document.createElement("div");
+        time.className = "action-log-time";
+        time.textContent = formatActionLogTime(log.at);
+        const main = document.createElement("div");
+        main.className = "action-log-main";
+        const student = document.createElement("strong");
+        student.textContent = `${log.studentId}号 ${log.studentName}`;
+        const item = document.createElement("small");
+        item.textContent = `${log.itemModule}｜${log.itemId}.${log.itemTitle}`;
+        const op = document.createElement("div");
+        op.className = "action-log-op";
+        op.textContent = `操作：${operationName(log.toStatus)}（${statusName(log.fromStatus)} → ${statusName(log.toStatus)}）`;
+        main.append(student, item, op);
+        row.append(time, main);
+        list.appendChild(row);
+      });
+    }
+
+    function openActionLogViewer() {
+      renderActionLogs();
+      document.getElementById("actionLogViewer").classList.add("show");
+    }
+
+    function closeActionLogViewer() {
+      document.getElementById("actionLogViewer").classList.remove("show");
+    }
+
+    async function copyActionLogs() {
+      const logs = normalizeActionLogs(state.actionLogs).slice().reverse();
+      const lines = [`${CLOUD_SYNC.classId}班登记记录`];
+      if (!logs.length) {
+        lines.push("暂无登记记录。");
+      } else {
+        logs.forEach(log => {
+          lines.push(`${formatActionLogTime(log.at)}\t${log.studentId}号 ${log.studentName}\t${log.itemModule}\t${log.itemId}.${log.itemTitle}\t${operationName(log.toStatus)}\t${statusName(log.fromStatus)}→${statusName(log.toStatus)}`);
+        });
+      }
+      try {
+        await navigator.clipboard.writeText(lines.join("\n"));
+        toast("登记记录已复制");
+      } catch {
+        toast("当前浏览器不允许复制，可用导出备份");
+      }
+    }
+
     function formatTime(totalSeconds) {
       const total = Math.max(0, Math.floor(totalSeconds || 0));
       const hours = Math.floor(total / 3600);
@@ -4071,7 +4264,8 @@
         customItems: state.customItems,
         records: state.records,
         workbookRecords: state.workbookRecords,
-        workbookAwards: state.workbookAwards
+        workbookAwards: state.workbookAwards,
+        actionLogs: state.actionLogs
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
@@ -4103,6 +4297,7 @@
           state.workbookRecords = data.workbookRecords || {};
           state.workbookAwards = data.workbookAwards || {};
           state.customItems = normalizeCustomItems(data.customItems);
+          state.actionLogs = normalizeActionLogs(data.actionLogs);
           applyCustomItems();
           save();
           renderModuleOptions();
@@ -4182,13 +4377,13 @@
       });
       document.getElementById("copyToRecheckBtn").addEventListener("click", copyToRecheck);
       document.getElementById("resetBtn").addEventListener("click", () => {
-        if (confirm("确定清空所有登记记录吗？")) {
+        if (confirm("确定清空当前背书状态吗？右上角登记记录会保留。")) {
           state.records = {};
           state.workbookRecords = {};
           state.workbookAwards = {};
           save();
           render();
-          toast("登记记录已清空");
+          toast("当前背书状态已清空，登记记录已保留");
         }
       });
       document.getElementById("soundBtn").addEventListener("click", () => {
@@ -4201,12 +4396,18 @@
       document.getElementById("copyMissingBtn").addEventListener("click", copyMissingList);
       document.getElementById("fullscreenBtn").addEventListener("click", toggleFullscreen);
       document.getElementById("addItemTopBtn").addEventListener("click", openItemEditor);
+      document.getElementById("actionLogBtn").addEventListener("click", openActionLogViewer);
       document.getElementById("addItemBtn").addEventListener("click", openItemEditor);
       document.getElementById("closeItemEditor").addEventListener("click", closeItemEditor);
       document.getElementById("clearItemForm").addEventListener("click", clearItemForm);
       document.getElementById("saveNewItem").addEventListener("click", saveNewItem);
       document.getElementById("itemEditor").addEventListener("click", event => {
         if (event.target.id === "itemEditor") closeItemEditor();
+      });
+      document.getElementById("closeActionLogViewer").addEventListener("click", closeActionLogViewer);
+      document.getElementById("copyActionLogBtn").addEventListener("click", copyActionLogs);
+      document.getElementById("actionLogViewer").addEventListener("click", event => {
+        if (event.target.id === "actionLogViewer") closeActionLogViewer();
       });
       ["timerHour", "timerMinute", "timerSecond"].forEach(id => {
         document.getElementById(id).addEventListener("input", syncTimerFromInputs);
