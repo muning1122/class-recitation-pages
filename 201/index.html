@@ -2304,6 +2304,7 @@
       activeSpot: null,
       reviewTimer: null,
       lastDrawMode: "random",
+      drawHistory: [],
       customItems: [],
       timerDuration: 300,
       timerRemaining: 300,
@@ -3635,6 +3636,85 @@
       state.reviewTimer = null;
     }
 
+    const DRAW_RECENT_MS = 40 * 60 * 1000;
+
+    function drawHistoryKey() {
+      return `${STORAGE_KEY}_draw_history_v1`;
+    }
+
+    function normalizeDrawHistory(history) {
+      const cutoff = Date.now() - DRAW_RECENT_MS;
+      return (Array.isArray(history) ? history : [])
+        .map(entry => ({
+          studentId: Number(entry.studentId),
+          itemId: Number(entry.itemId),
+          mode: String(entry.mode || "random"),
+          at: Number(entry.at) || 0
+        }))
+        .filter(entry => entry.studentId && entry.itemId && entry.at >= cutoff)
+        .slice(-240);
+    }
+
+    function loadDrawHistory() {
+      try {
+        state.drawHistory = normalizeDrawHistory(JSON.parse(localStorage.getItem(drawHistoryKey()) || "[]"));
+      } catch {
+        state.drawHistory = [];
+      }
+    }
+
+    function saveDrawHistory() {
+      localStorage.setItem(drawHistoryKey(), JSON.stringify(state.drawHistory));
+    }
+
+    function pruneDrawHistory() {
+      const next = normalizeDrawHistory(state.drawHistory);
+      if (next.length !== state.drawHistory.length) {
+        state.drawHistory = next;
+        saveDrawHistory();
+      }
+      return next;
+    }
+
+    function recentDrawSets() {
+      const recent = pruneDrawHistory();
+      return {
+        students: new Set(recent.map(entry => entry.studentId)),
+        items: new Set(recent.map(entry => entry.itemId)),
+        pairs: new Set(recent.map(entry => `${entry.studentId}-${entry.itemId}`))
+      };
+    }
+
+    function diversifySpotPool(pool) {
+      if (!pool.length) return pool;
+      const recent = recentDrawSets();
+      const freshBoth = pool.filter(pick => !recent.students.has(pick.student.id) && !recent.items.has(pick.item.id));
+      if (freshBoth.length) return freshBoth;
+      const freshStudent = pool.filter(pick => !recent.students.has(pick.student.id));
+      if (freshStudent.length) return freshStudent;
+      const freshItem = pool.filter(pick => !recent.items.has(pick.item.id));
+      if (freshItem.length) return freshItem;
+      const freshPair = pool.filter(pick => !recent.pairs.has(`${pick.student.id}-${pick.item.id}`));
+      return freshPair.length ? freshPair : pool;
+    }
+
+    function randomPick(pool) {
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function recordDrawPick(pick, mode) {
+      if (!pick?.student || !pick?.item) return;
+      pruneDrawHistory();
+      state.drawHistory.push({
+        studentId: pick.student.id,
+        itemId: pick.item.id,
+        mode,
+        at: Date.now()
+      });
+      state.drawHistory = state.drawHistory.slice(-240);
+      saveDrawHistory();
+    }
+
     function spotPool(onlyAlerts = false) {
       let pool = [];
       const activeGroup = groupById(state.group);
@@ -3655,6 +3735,7 @@
 
     function applySpotPick(pick, mode) {
       state.activeSpot = pick;
+      recordDrawPick(pick, mode);
       const reviewMode = mode === "review";
       const labelText = reviewMode ? "已背回抽" : pick.status === "recheck" ? "待复查抽查" : mode === "alert" ? "提醒抽查" : "随机抽查";
       const labelClass = reviewMode ? "chip good" : pick.status === "recheck" ? "chip red" : mode === "alert" ? "chip warn" : "chip";
@@ -3670,7 +3751,7 @@
         ? "回抽结果：先让这位同学现场背诵，背完再显示答案。"
         : pick.status === "recheck"
           ? "优先复查：先让学生背，背完再显示答案。"
-          : "先让学生背，背完再点“显示答案”核对。";
+          : "已尽量避开40分钟内抽过的学生和知识点；先让学生背，背完再点“显示答案”核对。";
       hideSpotAnswer(hint);
       updateSpotNextLabel();
       document.getElementById("spotlight").classList.add("show");
@@ -3678,6 +3759,7 @@
 
     function spinSpot(pool, mode) {
       stopSpotTimer();
+      pool = diversifySpotPool(pool);
       const spot = document.getElementById("spotlight");
       const card = document.getElementById("spotCard");
       const nameEl = document.getElementById("spotName");
@@ -3693,8 +3775,8 @@
       labelEl.textContent = reviewMode ? "已背回抽" : mode === "alert" ? "提醒抽查" : "随机抽查";
       labelEl.className = reviewMode ? "chip good" : mode === "alert" ? "chip warn" : "chip";
       hintEl.textContent = reviewMode
-        ? "正在从所有已背记录里跳动抽取，最后定格后进行现场复查。"
-        : "正在随机跳动抽取学生和知识点，定格后先背诵，再显示答案核对。";
+        ? "正在从已背记录里跳动抽取，会尽量避开40分钟内抽过的人和知识点。"
+        : "正在随机跳动抽取，会尽量避开40分钟内抽过的人和知识点。";
       document.getElementById("spotReveal").style.display = "none";
       contentEl.innerHTML = reviewMode
         ? `<span class="chip good">只抽“已背过”的记录</span><span class="chip">不包含空白、抄写、待复查</span>`
@@ -3708,7 +3790,7 @@
       let ticks = 0;
       let current = pool[0];
       state.reviewTimer = setInterval(() => {
-        current = pool[Math.floor(Math.random() * pool.length)];
+        current = randomPick(pool);
         nameEl.textContent = `${current.student.id}号 ${current.student.name}`;
         topicEl.textContent = `${current.item.id}. ${current.item.title}`;
         if (ticks % 3 === 0) renderSpotCandidates(pool, current);
@@ -3716,7 +3798,7 @@
         if (ticks % 7 === 0) playChime("tick");
         if (ticks >= (reviewMode ? 34 : 28)) {
           stopSpotTimer();
-          const finalPick = pool[Math.floor(Math.random() * pool.length)];
+          const finalPick = randomPick(pool);
           applySpotPick(finalPick, mode);
           renderSpotCandidates(pool, finalPick);
           playChime(reviewMode ? "module" : "next");
@@ -4333,6 +4415,7 @@
     }
 
     load();
+    loadDrawHistory();
     renderGroupOptions();
     renderModuleOptions();
     bindEvents();
