@@ -777,7 +777,7 @@
 
     .deadline-title h2 {
       margin: 8px 0 6px;
-      font-size: clamp(34px, 5vw, 68px);
+      font-size: clamp(30px, 4vw, 52px);
       line-height: 1.02;
     }
 
@@ -832,7 +832,7 @@
 
     .deadline-layout {
       display: grid;
-      grid-template-columns: minmax(280px, .38fr) minmax(420px, 1fr);
+      grid-template-columns: minmax(280px, .34fr) minmax(520px, 1fr);
       gap: 12px;
       align-items: start;
     }
@@ -895,14 +895,15 @@
 
     .deadline-student-list {
       display: grid;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 8px;
       padding: 12px;
     }
 
     .deadline-student {
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px;
+      padding: 10px;
       background: #f8fafc;
     }
 
@@ -910,44 +911,56 @@
       display: flex;
       justify-content: space-between;
       gap: 10px;
-      align-items: flex-start;
-      margin-bottom: 10px;
+      align-items: center;
+      margin-bottom: 8px;
     }
 
     .deadline-student-head strong {
-      font-size: 28px;
+      font-size: 30px;
       line-height: 1.15;
     }
 
     .deadline-item-list {
-      display: grid;
-      gap: 8px;
+      display: none;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .deadline-expanded .deadline-item-list {
+      display: flex;
     }
 
     .deadline-item {
-      border-radius: 8px;
+      border-radius: 999px;
       border: 1px solid var(--line);
       background: white;
-      padding: 10px 12px;
+      padding: 4px 8px;
+      max-width: 100%;
+    }
+
+    .deadline-item.deadline-more {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: rgba(99,102,241,.24);
     }
 
     .deadline-item-title {
       display: flex;
-      gap: 8px;
+      gap: 5px;
       flex-wrap: wrap;
       align-items: center;
-      font-size: 20px;
-      font-weight: 900;
-      line-height: 1.3;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.25;
     }
 
     .deadline-status {
       display: inline-grid;
       place-items: center;
-      min-height: 28px;
+      min-height: 18px;
       border-radius: 999px;
-      padding: 0 10px;
-      font-size: 14px;
+      padding: 0 6px;
+      font-size: 11px;
       color: white;
       background: var(--red);
       flex: 0 0 auto;
@@ -958,10 +971,10 @@
 
     .deadline-content {
       display: none;
-      margin-top: 7px;
+      margin-top: 5px;
       color: #334155;
-      font-size: 17px;
-      line-height: 1.55;
+      font-size: 12px;
+      line-height: 1.4;
     }
 
     .deadline-expanded .deadline-content {
@@ -2306,7 +2319,7 @@
           <div class="deadline-title">
             <span class="chip red">截止名单</span>
             <h2>还没真正背完的同学</h2>
-            <p>空白记录显示为“未背”，抄写补上和待复查也会列出来。适合投屏宣布：这些同学按对应知识点抄写、补背、再复查。</p>
+            <p>跟随上方小组筛选。默认重点显示“谁还没背完”，知识点压缩成小标签；需要看具体内容时再展开。</p>
           </div>
           <div class="deadline-metrics" id="deadlineMetrics"></div>
         </div>
@@ -2328,7 +2341,7 @@
           <div class="panel">
             <div class="panel-head">
               <h2>按小组分类</h2>
-              <span class="chip warn">投屏收尾用</span>
+              <span class="chip warn" id="deadlineScopeChip">投屏收尾用</span>
             </div>
             <div class="panel-body">
               <div class="deadline-group-list" id="deadlineGroupList"></div>
@@ -3722,7 +3735,8 @@
     }
 
     function deadlineEntries() {
-      return STUDENTS.map(student => {
+      const activeGroup = groupById(state.group);
+      return STUDENTS.filter(student => !activeGroup || activeGroup.memberIds.includes(student.id)).map(student => {
         const misses = ITEMS
           .map(item => ({ item, status: getStatus(student.id, item.id) }))
           .filter(row => row.status !== "done");
@@ -3736,6 +3750,8 @@
     }
 
     function renderDeadlineStudent(entry) {
+      const visibleMisses = state.deadlineExpanded ? entry.misses : entry.misses.slice(0, 10);
+      const hiddenCount = entry.misses.length - visibleMisses.length;
       return `
         <article class="deadline-student">
           <div class="deadline-student-head">
@@ -3747,7 +3763,7 @@
             </div>
           </div>
           <div class="deadline-item-list">
-            ${entry.misses.map(row => `
+            ${visibleMisses.map(row => `
               <div class="deadline-item">
                 <div class="deadline-item-title">
                   <span class="deadline-status ${deadlineStatusClass(row.status)}">${deadlineStatusLabel(row.status)}</span>
@@ -3756,6 +3772,7 @@
                 <div class="deadline-content">${row.item.module}：${row.item.content}</div>
               </div>
             `).join("")}
+            ${hiddenCount > 0 ? `<div class="deadline-item deadline-more"><div class="deadline-item-title">另 ${hiddenCount} 项</div></div>` : ""}
           </div>
         </article>
       `;
@@ -3771,6 +3788,8 @@
       const copy = entries.reduce((sum, entry) => sum + entry.copy, 0);
       const recheck = entries.reduce((sum, entry) => sum + entry.recheck, 0);
       const totalNeed = blank + copy + recheck;
+      const activeGroup = groupById(state.group);
+      document.getElementById("deadlineScopeChip").textContent = activeGroup ? groupDisplayName(activeGroup) : "全部小组";
       metrics.innerHTML = [
         ["需处理学生", entries.length, "还有名单"],
         ["未背空白项", blank, "必须补背"],
@@ -3793,7 +3812,8 @@
         </button>
       `).join("") : `<div class="deadline-empty">全班已清零，没有截止名单。</div>`;
 
-      const grouped = GROUPS
+      const sourceGroups = activeGroup ? [activeGroup] : GROUPS;
+      const grouped = sourceGroups
         .map(group => ({ group, entries: entries.filter(entry => entry.group?.id === group.id) }))
         .filter(block => block.entries.length);
       const ungrouped = entries.filter(entry => !entry.group);
