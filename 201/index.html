@@ -760,6 +760,225 @@
       line-height: 1.45;
     }
 
+    .deadline-hero {
+      display: grid;
+      grid-template-columns: minmax(320px, 1.1fr) minmax(260px, .9fr);
+      gap: 14px;
+      align-items: stretch;
+      padding: 18px;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.96), rgba(254,242,242,.88)),
+        radial-gradient(circle at 16% 18%, rgba(239,68,68,.18), transparent 38%);
+      border: 1px solid rgba(255,255,255,.88);
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+
+    .deadline-title h2 {
+      margin: 8px 0 6px;
+      font-size: clamp(34px, 5vw, 68px);
+      line-height: 1.02;
+    }
+
+    .deadline-title p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .deadline-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .deadline-metric {
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--line);
+      padding: 12px;
+      min-height: 104px;
+    }
+
+    .deadline-metric span {
+      display: block;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .deadline-metric strong {
+      display: block;
+      font-size: 42px;
+      line-height: 1;
+      margin-top: 8px;
+      color: var(--ink);
+    }
+
+    .deadline-tools {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: 0 0 12px;
+    }
+
+    .deadline-tools .btn {
+      min-height: 44px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .deadline-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, .38fr) minmax(420px, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .deadline-name-list,
+    .deadline-group-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .deadline-name-card {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .deadline-name-card strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.15;
+    }
+
+    .deadline-name-card small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .deadline-group-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: white;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(15,23,42,.07);
+    }
+
+    .deadline-group-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px;
+      background: linear-gradient(135deg, #fff7ed, #fff);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .deadline-group-head h3 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.15;
+    }
+
+    .deadline-group-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .deadline-student-list {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+    }
+
+    .deadline-student {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .deadline-student-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .deadline-student-head strong {
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .deadline-item-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .deadline-item {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: white;
+      padding: 10px 12px;
+    }
+
+    .deadline-item-title {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .deadline-status {
+      display: inline-grid;
+      place-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      padding: 0 10px;
+      font-size: 14px;
+      color: white;
+      background: var(--red);
+      flex: 0 0 auto;
+    }
+
+    .deadline-status.copy { background: var(--amber); color: #241500; }
+    .deadline-status.recheck { background: var(--violet); }
+
+    .deadline-content {
+      display: none;
+      margin-top: 7px;
+      color: #334155;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+
+    .deadline-expanded .deadline-content {
+      display: block;
+    }
+
+    .deadline-empty {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: white;
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--green);
+    }
+
     @keyframes completeGlow {
       0%, 100% { box-shadow: 0 16px 28px rgba(16, 185, 129, .12); }
       50% { box-shadow: 0 18px 38px rgba(16, 185, 129, .28); }
@@ -1931,7 +2150,7 @@
       .status-board { grid-template-columns: 1fr; }
       .tabs {
         display: grid;
-        grid-template-columns: repeat(7, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
       .tab {
         padding: 0 6px;
@@ -1946,6 +2165,12 @@
         min-width: 0;
         padding: 0 8px;
       }
+      .deadline-hero,
+      .deadline-layout {
+        grid-template-columns: 1fr;
+      }
+      .deadline-title h2 { font-size: 38px; }
+      .deadline-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .mobile-quick {
         left: 6px;
         right: 6px;
@@ -2029,6 +2254,7 @@
         <button class="tab" data-view="items">知识点</button>
         <button class="tab" data-view="recite">清单</button>
         <button class="tab" data-view="workbook">书本订正</button>
+        <button class="tab" data-view="deadline">截止名单</button>
         <button class="tab" data-view="screen">大屏</button>
       </div>
       <div class="search">
@@ -2195,6 +2421,42 @@
         </div>
       </section>
 
+      <section class="view" id="deadlineView">
+        <div class="deadline-hero">
+          <div class="deadline-title">
+            <span class="chip red">截止名单</span>
+            <h2>还没真正背完的同学</h2>
+            <p>空白记录显示为“未背”，抄写补上和待复查也会列出来。适合投屏宣布：这些同学按对应知识点抄写、补背、再复查。</p>
+          </div>
+          <div class="deadline-metrics" id="deadlineMetrics"></div>
+        </div>
+        <div class="deadline-tools">
+          <button class="btn danger" id="deadlineExpandBtn">显示全部背诵内容</button>
+          <button class="btn primary" id="copyDeadlineBtn">复制抄写名单</button>
+          <button class="btn" onclick="switchView('register'); render();">返回登记台</button>
+        </div>
+        <div class="deadline-layout">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>全班总表</h2>
+              <span class="chip red" id="deadlineAllChip">0人</span>
+            </div>
+            <div class="panel-body">
+              <div class="deadline-name-list" id="deadlineAllList"></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>按小组分类</h2>
+              <span class="chip warn">投屏收尾用</span>
+            </div>
+            <div class="panel-body">
+              <div class="deadline-group-list" id="deadlineGroupList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="view" id="screenView">
         <div class="stage">
           <div class="screen-card">
@@ -2323,6 +2585,7 @@
     <button class="btn" data-mobile-view="items">知识</button>
     <button class="btn" data-mobile-view="recite">清单</button>
     <button class="btn" data-mobile-view="workbook">订正</button>
+    <button class="btn danger" data-mobile-view="deadline">截止</button>
     <button class="btn primary" id="mobileDraw">抽查</button>
     <button class="btn good" id="mobileReviewDraw">回抽</button>
   </div>
@@ -2380,6 +2643,7 @@
       drawHistory: [],
       customItems: [],
       actionLogs: [],
+      deadlineExpanded: false,
       timerDuration: 300,
       timerRemaining: 300,
       timerRunning: false,
@@ -3584,6 +3848,162 @@
       `;
     }
 
+    function deadlineStatusLabel(status) {
+      if (status === "copy") return "抄写";
+      if (status === "recheck") return "复查";
+      return "未背";
+    }
+
+    function deadlineStatusClass(status) {
+      if (status === "copy") return "copy";
+      if (status === "recheck") return "recheck";
+      return "none";
+    }
+
+    function deadlineEntries() {
+      return STUDENTS.map(student => {
+        const misses = ITEMS
+          .map(item => ({ item, status: getStatus(student.id, item.id) }))
+          .filter(row => row.status !== "done");
+        const blank = misses.filter(row => row.status === "none").length;
+        const copy = misses.filter(row => row.status === "copy").length;
+        const recheck = misses.filter(row => row.status === "recheck").length;
+        return { student, group: studentGroup(student.id), misses, blank, copy, recheck };
+      })
+        .filter(entry => entry.misses.length)
+        .sort((a, b) => b.misses.length - a.misses.length || a.student.id - b.student.id);
+    }
+
+    function renderDeadlineStudent(entry) {
+      return `
+        <article class="deadline-student">
+          <div class="deadline-student-head">
+            <strong>${entry.student.id}号 ${entry.student.name}</strong>
+            <div class="chips">
+              ${entry.blank ? `<span class="chip red">未背${entry.blank}</span>` : ""}
+              ${entry.copy ? `<span class="chip warn">抄写${entry.copy}</span>` : ""}
+              ${entry.recheck ? `<span class="chip violet">复查${entry.recheck}</span>` : ""}
+            </div>
+          </div>
+          <div class="deadline-item-list">
+            ${entry.misses.map(row => `
+              <div class="deadline-item">
+                <div class="deadline-item-title">
+                  <span class="deadline-status ${deadlineStatusClass(row.status)}">${deadlineStatusLabel(row.status)}</span>
+                  <span>${row.item.id}. ${row.item.title}</span>
+                </div>
+                <div class="deadline-content">${row.item.module}：${row.item.content}</div>
+              </div>
+            `).join("")}
+          </div>
+        </article>
+      `;
+    }
+
+    function renderDeadlineBoard() {
+      const view = document.getElementById("deadlineView");
+      if (!view || !view.classList.contains("active")) return;
+      const metrics = document.getElementById("deadlineMetrics");
+      if (!metrics) return;
+      const entries = deadlineEntries();
+      const blank = entries.reduce((sum, entry) => sum + entry.blank, 0);
+      const copy = entries.reduce((sum, entry) => sum + entry.copy, 0);
+      const recheck = entries.reduce((sum, entry) => sum + entry.recheck, 0);
+      const totalNeed = blank + copy + recheck;
+      metrics.innerHTML = [
+        ["需处理学生", entries.length, "还有名单"],
+        ["未背空白项", blank, "必须补背"],
+        ["抄写补上项", copy, "建议复查"],
+        ["待复查项", recheck, "课堂抽查"]
+      ].map(([label, value, sub]) => `
+        <div class="deadline-metric">
+          <span>${label}</span>
+          <strong>${value}</strong>
+          <span>${sub}</span>
+        </div>
+      `).join("");
+      document.getElementById("deadlineAllChip").textContent = `${entries.length}人 · ${totalNeed}项`;
+      document.getElementById("deadlineExpandBtn").textContent = state.deadlineExpanded ? "收起背诵内容" : "显示全部背诵内容";
+      view.classList.toggle("deadline-expanded", state.deadlineExpanded);
+      document.getElementById("deadlineAllList").innerHTML = entries.length ? entries.map(entry => `
+        <button class="deadline-name-card" onclick="openStudent(${entry.student.id})">
+          <strong>${entry.student.id}号 ${entry.student.name}</strong>
+          <small>${entry.group ? groupDisplayName(entry.group) : "未分组"} · 共 ${entry.misses.length} 项：未背 ${entry.blank}，抄写 ${entry.copy}，复查 ${entry.recheck}</small>
+        </button>
+      `).join("") : `<div class="deadline-empty">全班已清零，没有截止名单。</div>`;
+
+      const grouped = GROUPS
+        .map(group => ({ group, entries: entries.filter(entry => entry.group?.id === group.id) }))
+        .filter(block => block.entries.length);
+      const ungrouped = entries.filter(entry => !entry.group);
+      if (ungrouped.length) grouped.push({ group: null, entries: ungrouped });
+      document.getElementById("deadlineGroupList").innerHTML = grouped.length ? grouped.map(block => {
+        const groupBlank = block.entries.reduce((sum, entry) => sum + entry.blank, 0);
+        const groupCopy = block.entries.reduce((sum, entry) => sum + entry.copy, 0);
+        const groupRecheck = block.entries.reduce((sum, entry) => sum + entry.recheck, 0);
+        return `
+          <section class="deadline-group-card">
+            <div class="deadline-group-head">
+              <div>
+                <h3>${block.group ? groupDisplayName(block.group) : "未分组"}</h3>
+                <p>${block.group ? `${groupLeaderLabel(block.group)}负责登记 · ${block.group.range}` : "未放入小组的学生"} · ${block.entries.length}人需处理</p>
+              </div>
+              <div class="chips">
+                <span class="chip red">未背${groupBlank}</span>
+                <span class="chip warn">抄写${groupCopy}</span>
+                <span class="chip violet">复查${groupRecheck}</span>
+              </div>
+            </div>
+            <div class="deadline-student-list">
+              ${block.entries.map(renderDeadlineStudent).join("")}
+            </div>
+          </section>
+        `;
+      }).join("") : `<div class="deadline-empty">所有小组都已经清零。</div>`;
+    }
+
+    function toggleDeadlineContent() {
+      state.deadlineExpanded = !state.deadlineExpanded;
+      renderDeadlineBoard();
+      toast(state.deadlineExpanded ? "已显示全部背诵内容" : "已收起背诵内容");
+    }
+
+    async function copyDeadlineList() {
+      const entries = deadlineEntries();
+      const lines = [`${CLOUD_SYNC.classId}班截止未背名单`, `统计时间：${new Date().toLocaleString("zh-CN", { hour12: false })}`];
+      if (!entries.length) {
+        lines.push("全班已清零。");
+      } else {
+        GROUPS.forEach(group => {
+          const groupEntries = entries.filter(entry => entry.group?.id === group.id);
+          if (!groupEntries.length) return;
+          lines.push("", `${groupDisplayName(group)}（${groupLeaderLabel(group)}，${group.range}）`);
+          groupEntries.forEach(entry => {
+            lines.push(`${entry.student.id}号 ${entry.student.name}：`);
+            entry.misses.forEach(row => {
+              lines.push(`  ${row.item.id}. ${row.item.title}【${deadlineStatusLabel(row.status)}】${row.item.content}`);
+            });
+          });
+        });
+        const ungrouped = entries.filter(entry => !entry.group);
+        if (ungrouped.length) {
+          lines.push("", "未分组");
+          ungrouped.forEach(entry => {
+            lines.push(`${entry.student.id}号 ${entry.student.name}：`);
+            entry.misses.forEach(row => {
+              lines.push(`  ${row.item.id}. ${row.item.title}【${deadlineStatusLabel(row.status)}】${row.item.content}`);
+            });
+          });
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(lines.join("\n"));
+        toast("截止名单已复制");
+      } catch {
+        toast("当前浏览器不允许复制，可用投屏直接查看");
+      }
+    }
+
     function renderScreen() {
       const groupLeaders = GROUPS
         .map(group => groupStats(group))
@@ -4542,6 +4962,8 @@
       document.getElementById("fullscreenBtn").addEventListener("click", toggleFullscreen);
       document.getElementById("addItemTopBtn").addEventListener("click", openItemEditor);
       document.getElementById("actionLogBtn").addEventListener("click", openActionLogViewer);
+      document.getElementById("deadlineExpandBtn").addEventListener("click", toggleDeadlineContent);
+      document.getElementById("copyDeadlineBtn").addEventListener("click", copyDeadlineList);
       document.getElementById("addItemBtn").addEventListener("click", openItemEditor);
       document.getElementById("closeItemEditor").addEventListener("click", closeItemEditor);
       document.getElementById("clearItemForm").addEventListener("click", clearItemForm);
@@ -4612,6 +5034,7 @@
       renderItems();
       renderReciteList();
       renderWorkbook();
+      renderDeadlineBoard();
       renderScreen();
     }
 
