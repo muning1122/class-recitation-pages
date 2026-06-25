@@ -2325,6 +2325,7 @@
         </div>
         <div class="deadline-tools">
           <button class="btn danger" id="deadlineExpandBtn">显示全部背诵内容</button>
+          <button class="btn" id="deadlineRefreshBtn">刷新截止名单</button>
           <button class="btn primary" id="copyDeadlineBtn">复制抄写名单</button>
           <button class="btn" onclick="switchView('register'); render();">返回登记台</button>
         </div>
@@ -2555,10 +2556,12 @@
       syncState: "local",
       syncMessage: "本机保存",
       syncingFromCloud: false,
+      cloudPulling: false,
       cloudSaveTimer: null,
       cloudPollTimer: null,
       cloudApi: null,
-      remoteLoaded: false
+      remoteLoaded: false,
+      lastDeadlinePullAt: 0
     };
 
     const ACTION_LOG_LIMIT = 500;
@@ -2922,6 +2925,30 @@
       } else {
         setSyncMessage("online", connectedMessage);
       }
+    }
+
+    async function pullCloudNow(connectedMessage = "云端已连接") {
+      if (state.syncingFromCloud || state.cloudPulling || !state.cloudApi?.get) return false;
+      state.cloudPulling = true;
+      try {
+        applyRemotePayload(await state.cloudApi.get(), connectedMessage);
+        return true;
+      } catch (error) {
+        console.warn("cloud manual read failed", error);
+        setSyncMessage("offline", "云端刷新失败，本机继续可用");
+        return false;
+      } finally {
+        state.cloudPulling = false;
+      }
+    }
+
+    function refreshDeadlineBoard(options = {}) {
+      renderDeadlineBoard();
+      if (!options.pullCloud) return;
+      const now = Date.now();
+      if (!options.force && now - state.lastDeadlinePullAt < 2500) return;
+      state.lastDeadlinePullAt = now;
+      pullCloudNow("截止名单已刷新").then(() => renderDeadlineBoard());
     }
 
     async function initRestCloudSync(reason) {
@@ -4769,6 +4796,7 @@
       document.querySelectorAll(".tab").forEach(tab => tab.classList.toggle("active", tab.dataset.view === view));
       document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
       document.getElementById(`${view}View`).classList.add("active");
+      if (view === "deadline") refreshDeadlineBoard({ pullCloud: true, force: true });
     }
 
     function bindEvents() {
@@ -4838,6 +4866,7 @@
       document.getElementById("addItemTopBtn").addEventListener("click", openItemEditor);
       document.getElementById("actionLogBtn").addEventListener("click", openActionLogViewer);
       document.getElementById("deadlineExpandBtn").addEventListener("click", toggleDeadlineContent);
+      document.getElementById("deadlineRefreshBtn").addEventListener("click", () => refreshDeadlineBoard({ pullCloud: true, force: true }));
       document.getElementById("copyDeadlineBtn").addEventListener("click", copyDeadlineList);
       document.getElementById("addItemBtn").addEventListener("click", openItemEditor);
       document.getElementById("closeItemEditor").addEventListener("click", closeItemEditor);
@@ -4885,6 +4914,12 @@
       }));
       document.getElementById("mobileDraw").addEventListener("click", () => drawRandom(false));
       document.getElementById("mobileReviewDraw").addEventListener("click", drawCompletedReview);
+      window.addEventListener("focus", () => {
+        if (state.activeView === "deadline") refreshDeadlineBoard({ pullCloud: true });
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden && state.activeView === "deadline") refreshDeadlineBoard({ pullCloud: true });
+      });
     }
 
     function spotSet(status) {
