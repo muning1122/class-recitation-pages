@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>401班可兑换积分表</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif; background: #f4f7fb; color: #142033; }
+    .page { width: min(1920px, 100vw); min-height: 100vh; padding: 26px 34px 28px; }
+    .hero { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 18px; margin-bottom: 18px; padding: 22px 26px; border-radius: 18px; background: linear-gradient(135deg, #123a5a, #17617d 58%, #16735f); color: white; box-shadow: 0 18px 42px rgba(21, 54, 84, .18); }
+    h1 { margin: 0; font-size: clamp(38px, 4.2vw, 70px); line-height: 1; letter-spacing: 0; }
+    .sub { margin-top: 12px; font-size: clamp(16px, 1.35vw, 24px); color: rgba(255,255,255,.82); }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(96px, 1fr)); gap: 12px; min-width: 520px; }
+    .stat { padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.22); }
+    .stat b { display: block; font-size: clamp(28px, 2.6vw, 44px); line-height: 1; }
+    .stat span { display: block; margin-top: 8px; font-size: 15px; color: rgba(255,255,255,.82); }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; }
+    .student { display: grid; grid-template-columns: 54px 1fr 82px; align-items: center; min-height: 68px; padding: 10px 12px; border-radius: 14px; background: #fff; border: 1px solid #dce5ef; box-shadow: 0 8px 20px rgba(15, 23, 42, .06); }
+    .no { width: 42px; height: 42px; line-height: 42px; border-radius: 999px; text-align: center; font-size: 21px; font-weight: 900; color: #17324d; background: #e9f2ff; }
+    .name { font-size: clamp(21px, 1.55vw, 30px); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .score { justify-self: end; min-width: 68px; height: 46px; line-height: 46px; border-radius: 12px; text-align: center; font-size: clamp(24px, 2vw, 36px); font-weight: 950; color: white; background: #17617d; }
+    .student.top .score { background: #c2410c; } .student.high .score { background: #0f766e; } .student.mid .score { background: #2563eb; } .student.low .score { background: #64748b; }
+    .footer { margin-top: 16px; display: flex; justify-content: space-between; gap: 16px; color: #64748b; font-size: 16px; }
+    @media (max-width: 1100px) { .page { padding: 18px; } .hero { grid-template-columns: 1fr; } .stats { min-width: 0; grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) { .grid { grid-template-columns: 1fr; } .student { grid-template-columns: 50px 1fr 74px; } .footer { display: block; line-height: 1.8; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero"><div><h1>401班可兑换积分表</h1><div class="sub">2026-06-26　按学号排序，白板横屏展示版</div></div><div class="stats"><div class="stat"><b>50</b><span>学生人数</span></div><div class="stat"><b>3260</b><span>全班可兑积分</span></div><div class="stat"><b>65.2</b><span>平均积分</span></div><div class="stat"><b>189</b><span>最高积分</span></div></div></section>
+    <section class="grid" aria-label="学生可兑换积分">
+        <div class="student mid">
+          <span class="no">01</span>
+          <span class="name">邓静汶</span>
+          <span class="score">67</span>
+        </div>
+        <div class="student mid">
+          <span class="no">02</span>
+          <span class="name">黄梓童</span>
+          <span class="score">71</span>
+        </div>
+        <div class="student mid">
+          <span class="no">03</span>
+          <span class="name">李梦瑶</span>
+          <span class="score">74</span>
+        </div>
+        <div class="student low">
+          <span class="no">04</span>
+          <span class="name">李瑞晨</span>
+          <span class="score">22</span>
+        </div>
+        <div class="student mid">
+          <span class="no">05</span>
+          <span class="name">李怡欣</span>
+          <span class="score">59</span>
+        </div>
+        <div class="student high">
+          <span class="no">06</span>
+          <span class="name">梁洛瑜</span>
+          <span class="score">103</span>
+        </div>
+        <div class="student low">
+          <span class="no">07</span>
+          <span class="name">林漪霞</span>
+          <span class="score">35</span>
+        </div>
+        <div class="student top">
+          <span class="no">08</span>
+          <span class="name">刘子菡</span>
+          <span class="score">136</span>
+        </div>
+        <div class="student low">
+          <span class="no">09</span>
+          <span class="name">石恩宁</span>
+          <span class="score">17</span>
+        </div>
+        <div class="student mid">
+          <span class="no">10</span>
+          <span class="name">石馨予</span>
+          <span class="score">60</span>
+        </div>
+        <div class="student mid">
+          <span class="no">11</span>
+          <span class="name">童晓柔</span>
+          <span class="score">77</span>
+        </div>
+        <div class="student top">
+          <span class="no">12</span>
+          <span class="name">韦语萱</span>
+          <span class="score">126</span>
+        </div>
+        <div class="student mid">
+          <span class="no">13</span>
+          <span class="name">徐安妮</span>
+          <span class="score">77</span>
+        </div>
+        <div class="student mid">
+          <span class="no">14</span>
+          <span class="name">徐靖榕</span>
+          <span class="score">44</span>
+        </div>
+        <div class="student high">
+          <span class="no">15</span>
+          <span class="name">张心愉</span>
+          <span class="score">81</span>
+        </div>
+        <div class="student top">
+          <span class="no">16</span>
+          <span class="name">张允馨</span>
+          <span class="score">189</span>
+        </div>
+        <div class="student low">
+          <span class="no">17</span>
+          <span class="name">郑晞彤</span>
+          <span class="score">29</span>
+        </div>
+        <div class="student high">
+          <span class="no">18</span>
+          <span class="name">朱语彤</span>
+          <span class="score">92</span>
+        </div>
+        <div class="student low">
+          <span class="no">19</span>
+          <span class="name">陈志远</span>
+          <span class="score">10</span>
+        </div>
+        <div class="student mid">
+          <span class="no">20</span>
+          <span class="name">邓超铭</span>
+          <span class="score">65</span>
+        </div>
+        <div class="student low">
+          <span class="no">21</span>
+          <span class="name">杜思锐</span>
+          <span class="score">1</span>
+        </div>
+        <div class="student mid">
+          <span class="no">22</span>
+          <span class="name">甘俊涛</span>
+          <span class="score">49</span>
+        </div>
+        <div class="student high">
+          <span class="no">23</span>
+          <span class="name">黄俊皓</span>
+          <span class="score">109</span>
+        </div>
+        <div class="student mid">
+          <span class="no">24</span>
+          <span class="name">黄浚铭</span>
+          <span class="score">77</span>
+        </div>
+        <div class="student mid">
+          <span class="no">25</span>
+          <span class="name">霍嘉琳</span>
+          <span class="score">60</span>
+        </div>
+        <div class="student top">
+          <span class="no">26</span>
+          <span class="name">霍庆坚</span>
+          <span class="score">137</span>
+        </div>
+        <div class="student low">
+          <span class="no">27</span>
+          <span class="name">霍耀彬</span>
+          <span class="score">24</span>
+        </div>
+        <div class="student mid">
+          <span class="no">28</span>
+          <span class="name">黎梓坤</span>
+          <span class="score">62</span>
+        </div>
+        <div class="student top">
+          <span class="no">29</span>
+          <span class="name">李俊杰</span>
+          <span class="score">148</span>
+        </div>
+        <div class="student mid">
+          <span class="no">30</span>
+          <span class="name">李星键</span>
+          <span class="score">71</span>
+        </div>
+        <div class="student low">
+          <span class="no">31</span>
+          <span class="name">连允槿</span>
+          <span class="score">30</span>
+        </div>
+        <div class="student mid">
+          <span class="no">32</span>
+          <span class="name">梁宸</span>
+          <span class="score">44</span>
+        </div>
+        <div class="student mid">
+          <span class="no">33</span>
+          <span class="name">梁茗钊</span>
+          <span class="score">59</span>
+        </div>
+        <div class="student high">
+          <span class="no">34</span>
+          <span class="name">梁逸培</span>
+          <span class="score">89</span>
+        </div>
+        <div class="student mid">
+          <span class="no">35</span>
+          <span class="name">林区域</span>
+          <span class="score">46</span>
+        </div>
+        <div class="student mid">
+          <span class="no">36</span>
+          <span class="name">刘毅欣</span>
+          <span class="score">57</span>
+        </div>
+        <div class="student mid">
+          <span class="no">37</span>
+          <span class="name">覃浩峰</span>
+          <span class="score">61</span>
+        </div>
+        <div class="student mid">
+          <span class="no">38</span>
+          <span class="name">巫子平</span>
+          <span class="score">40</span>
+        </div>
+        <div class="student low">
+          <span class="no">39</span>
+          <span class="name">徐海荣</span>
+          <span class="score">36</span>
+        </div>
+        <div class="student mid">
+          <span class="no">40</span>
+          <span class="name">蔡梓豪</span>
+          <span class="score">59</span>
+        </div>
+        <div class="student high">
+          <span class="no">41</span>
+          <span class="name">游弘翔</span>
+          <span class="score">81</span>
+        </div>
+        <div class="student mid">
+          <span class="no">42</span>
+          <span class="name">袁健恒</span>
+          <span class="score">42</span>
+        </div>
+        <div class="student mid">
+          <span class="no">43</span>
+          <span class="name">周建恒</span>
+          <span class="score">48</span>
+        </div>
+        <div class="student mid">
+          <span class="no">44</span>
+          <span class="name">周钰然</span>
+          <span class="score">56</span>
+        </div>
+        <div class="student low">
+          <span class="no">45</span>
+          <span class="name">曾梓锋</span>
+          <span class="score">19</span>
+        </div>
+        <div class="student high">
+          <span class="no">46</span>
+          <span class="name">欧炜</span>
+          <span class="score">107</span>
+        </div>
+        <div class="student low">
+          <span class="no">47</span>
+          <span class="name">谢思洋</span>
+          <span class="score">5</span>
+        </div>
+        <div class="student mid">
+          <span class="no">48</span>
+          <span class="name">张心悦</span>
+          <span class="score">68</span>
+        </div>
+        <div class="student high">
+          <span class="no">49</span>
+          <span class="name">欧鸿涛</span>
+          <span class="score">89</span>
+        </div>
+        <div class="student mid">
+          <span class="no">50</span>
+          <span class="name">叶小莉</span>
+          <span class="score">52</span>
+        </div>
+    </section>
+    <section class="footer"><span>最高: 张允馨 (189分)  最低: 杜思锐 (1分)</span><span>数据来源: 班级优化大师奖励积分回读核验日志，未执行任何加扣分或兑换操作。</span></section>
+  </main>
+</body>
+</html>
