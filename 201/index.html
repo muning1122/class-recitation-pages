@@ -830,6 +830,80 @@
       font-weight: 900;
     }
 
+    .deadline-sprint {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 0 0 12px;
+    }
+
+    .sprint-card {
+      border: 1px solid rgba(255,255,255,.9);
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(240,249,255,.92));
+      box-shadow: var(--shadow);
+      padding: 14px;
+      min-height: 176px;
+    }
+
+    .sprint-card h3 {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.15;
+    }
+
+    .sprint-card p {
+      margin: 6px 0 10px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-weight: 800;
+    }
+
+    .sprint-card.urgent {
+      background: linear-gradient(135deg, rgba(255,247,237,.98), rgba(255,255,255,.92));
+    }
+
+    .sprint-card.copy {
+      background: linear-gradient(135deg, rgba(254,243,199,.98), rgba(255,255,255,.92));
+    }
+
+    .sprint-list {
+      display: grid;
+      gap: 7px;
+    }
+
+    .sprint-person {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 8px;
+      padding: 9px 10px;
+      text-align: left;
+    }
+
+    .sprint-person strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1.12;
+    }
+
+    .sprint-person small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .sprint-empty {
+      border: 1px dashed rgba(148,163,184,.6);
+      border-radius: 8px;
+      padding: 14px;
+      color: var(--muted);
+      background: rgba(255,255,255,.66);
+      font-weight: 900;
+      text-align: center;
+    }
+
     .deadline-layout {
       display: grid;
       grid-template-columns: minmax(280px, .34fr) minmax(520px, 1fr);
@@ -2179,6 +2253,7 @@
         padding: 0 8px;
       }
       .deadline-hero,
+      .deadline-sprint,
       .deadline-layout {
         grid-template-columns: 1fr;
       }
@@ -2449,6 +2524,7 @@
           <button class="btn primary" id="copyDeadlineBtn">复制抄写名单</button>
           <button class="btn" onclick="switchView('register'); render();">返回登记台</button>
         </div>
+        <div class="deadline-sprint" id="deadlineSprint"></div>
         <div class="deadline-layout">
           <div class="panel">
             <div class="panel-head">
@@ -3230,8 +3306,13 @@
         button.classList.add("pop");
         setTimeout(() => button.classList.remove("pop"), 430);
       }
-      playChime(status === "done" ? "done" : "copy");
-      particleBurst(button, status === "done" ? "small" : "copy");
+      if (status === "copy") {
+        playChime("copy");
+        particleBurst(button, "copy");
+        return;
+      }
+      playChime("done");
+      particleBurst(button, "small");
       rewardGroupIfNeeded(before, after);
       if (!before.moduleDone && after.moduleDone) {
         setTimeout(() => {
@@ -3944,6 +4025,53 @@
       `;
     }
 
+    function renderSprintPeople(entries, emptyText) {
+      if (!entries.length) return `<div class="sprint-empty">${emptyText}</div>`;
+      return entries.map(entry => `
+        <button class="sprint-person" onclick="openStudent(${entry.student.id})">
+          <strong>${entry.student.id}号 ${entry.student.name}</strong>
+          <small>未背 ${entry.blank} · 抄写 ${entry.copy} · 复查 ${entry.recheck}</small>
+        </button>
+      `).join("");
+    }
+
+    function renderDeadlineSprint(entries) {
+      const sprint = document.getElementById("deadlineSprint");
+      if (!sprint) return;
+      const active = entries
+        .map(entry => ({ ...entry, oralNeed: entry.blank + entry.recheck }))
+        .filter(entry => entry.oralNeed > 0);
+      const almost = active
+        .filter(entry => entry.oralNeed <= 3)
+        .sort((a, b) => a.oralNeed - b.oralNeed || b.copy - a.copy || a.student.id - b.student.id)
+        .slice(0, 6);
+      const urgent = active
+        .filter(entry => entry.oralNeed > 3)
+        .sort((a, b) => b.oralNeed - a.oralNeed || b.copy - a.copy || a.student.id - b.student.id)
+        .slice(0, 6);
+      const copy = entries
+        .filter(entry => entry.copy > 0)
+        .sort((a, b) => b.copy - a.copy || b.blank - a.blank || a.student.id - b.student.id)
+        .slice(0, 6);
+      sprint.innerHTML = `
+        <section class="sprint-card">
+          <h3>临门一脚</h3>
+          <p>只差 1-3 项，适合马上抽背清零。</p>
+          <div class="sprint-list">${renderSprintPeople(almost, "暂时没有只差一点点的同学。")}</div>
+        </section>
+        <section class="sprint-card urgent">
+          <h3>重点攻坚</h3>
+          <p>未背或复查较多，优先安排组长盯人。</p>
+          <div class="sprint-list">${renderSprintPeople(urgent, "没有大块未完成名单。")}</div>
+        </section>
+        <section class="sprint-card copy">
+          <h3>抄写待复查</h3>
+          <p>抄写不弹完成庆祝，后续可再抽查。</p>
+          <div class="sprint-list">${renderSprintPeople(copy, "当前没有抄写待复查。")}</div>
+        </section>
+      `;
+    }
+
     function renderDeadlineBoard() {
       const view = document.getElementById("deadlineView");
       if (!view || !view.classList.contains("active")) return;
@@ -3956,6 +4084,7 @@
       const totalNeed = blank + copy + recheck;
       const activeGroup = groupById(state.group);
       document.getElementById("deadlineScopeChip").textContent = activeGroup ? groupDisplayName(activeGroup) : "全部小组";
+      renderDeadlineSprint(entries);
       metrics.innerHTML = [
         ["需处理学生", entries.length, "还有名单"],
         ["未背空白项", blank, "必须补背"],
