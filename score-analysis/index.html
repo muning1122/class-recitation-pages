@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>二01与401班数学成绩分析报告</title>
+  <style>
+    :root {
+      --ink:#1f2937; --muted:#6b7280; --line:#e5e7eb; --soft:#f8fafc;
+      --blue:#2563eb; --green:#059669; --amber:#d97706; --red:#dc2626;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; background:#fff; }
+    header { padding:34px 44px 26px; border-bottom:1px solid var(--line); background:linear-gradient(180deg,#f9fafb,#fff); }
+    main { padding:28px 44px 44px; max-width:1320px; margin:0 auto; }
+    h1 { margin:0 0 10px; font-size:30px; letter-spacing:0; }
+    h2 { margin:34px 0 14px; font-size:22px; }
+    h3 { margin:22px 0 10px; font-size:17px; }
+    p { margin:8px 0; }
+    .meta { color:var(--muted); }
+    .grid { display:grid; gap:16px; }
+    .two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .card { border:1px solid var(--line); border-radius:8px; padding:16px; background:#fff; }
+    .kpi { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:18px; }
+    .kpi .card { background:var(--soft); }
+    .num { display:block; font-size:26px; font-weight:750; }
+    .label { color:var(--muted); font-size:13px; }
+    table { width:100%; border-collapse:collapse; margin:10px 0 18px; font-size:13px; }
+    th,td { border:1px solid var(--line); padding:7px 8px; text-align:center; vertical-align:middle; }
+    th { background:#f3f4f6; font-weight:650; }
+    td:nth-child(1), th:nth-child(1), td:nth-child(2), th:nth-child(2) { text-align:left; }
+    .note { border-left:4px solid var(--blue); padding:10px 14px; background:#eff6ff; margin:12px 0; }
+    .warn { border-left-color:var(--amber); background:#fffbeb; }
+    .danger { color:var(--red); font-weight:650; }
+    .up { color:var(--green); font-weight:650; }
+    .down { color:var(--red); font-weight:650; }
+    .muted { color:var(--muted); }
+    .bars { display:grid; gap:10px; margin:12px 0 4px; }
+    .bar-row { display:grid; grid-template-columns:120px 1fr 48px; align-items:center; gap:10px; }
+    .bar-label { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#374151; }
+    .bar-track { height:12px; background:#edf2f7; border-radius:999px; overflow:hidden; }
+    .bar { height:100%; border-radius:999px; }
+    .bar.good { background:var(--green); }
+    .bar.mid { background:var(--amber); }
+    .bar.weak { background:var(--red); }
+    ul { margin:8px 0 0 18px; padding:0; }
+    li { margin:4px 0; }
+    .summary-list li { margin:7px 0; }
+    .section-band { margin-top:30px; padding-top:4px; border-top:2px solid #111827; }
+    @media (max-width: 920px) { header, main { padding-left:18px; padding-right:18px; } .two,.three,.kpi { grid-template-columns:1fr; } table { font-size:12px; } }
+    @media print { header { background:#fff; } .card { break-inside:avoid; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>二01与401班数学成绩分析报告</h1>
+  <p class="meta">数据来源：金山/WPS 云文档《（新）班级成绩登记表》前两个工作表，只读复制提取；生成日期：2026-06-30。</p>
+  <p class="meta">说明：空白列、#DIV/0! 列未纳入统计；401班最新“23-24”列有2名学生空缺，分析时按有效人数计算。</p>
+</header>
+<main>
+  <section class="kpi">
+    <div class="card"><span class="num">45人</span><span class="label">二01班有效学生数</span></div>
+    <div class="card"><span class="num">83.3</span><span class="label">二01最新列“全册内容”均分</span></div>
+    <div class="card"><span class="num">50人</span><span class="label">401班有效学生数</span></div>
+    <div class="card"><span class="num">76.0</span><span class="label">401最新列“23-24”均分</span></div>
+  </section>
+
+  <section class="section-band">
+    <h2>一、总体判断</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班：整体基础较稳，少数学生拖尾明显</h3>
+        <p>二01班已测6项，均分长期保持在80分以上，最高的“第1-2单元”达到89.0，最新“全册内容”均分83.3、及格率97.8%，说明班级主体对本学期核心知识掌握较扎实。</p>
+        <p>风险不在“大面积不会”，而在个别学生基础断层。最低分集中出现在谢润东等少数学生身上，容易拉低班级均分，也需要更具体的补缺方案。</p>
+      </div>
+      <div class="card">
+        <h3>401班：波动较大，第三单元与反馈检测是关键诊断点</h3>
+        <p>401班从第1、2单元均分82.0下降到第3单元70.3，后续虽有恢复，但最新“23-24”均分76.0，仍低于二01最新水平7.3分。</p>
+        <p>401班的问题更像“中下层面扩大”：第3单元、17-18、23-24这几次及格率都偏低，低分学生不只是个别一两人，需要分层推进。</p>
+      </div>
+    </div>
+    <div class="note warn">
+      <b>班主任视角建议：</b>二01班抓“保优+补个别短板”；401班抓“中段回稳+低分学生清单化跟进”。两班都不适合只看平均分，必须同时看低分人数、优秀率和学生个人曲线。
+    </div>
+  </section>
+
+  <section class="section-band">
+    <h2>二、单元表现与趋势</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班各测验均分</h3>
+        <div class='bars'><div class='bar-row'><div class='bar-label'>时间</div><div class='bar-track'><div class='bar good' style='width:88.2%'></div></div><div class='bar-value'>88.2</div></div><div class='bar-row'><div class='bar-label'>第1单元</div><div class='bar-track'><div class='bar mid' style='width:82.8%'></div></div><div class='bar-value'>82.8</div></div><div class='bar-row'><div class='bar-label'>第2单元</div><div class='bar-track'><div class='bar good' style='width:86.1%'></div></div><div class='bar-value'>86.1</div></div><div class='bar-row'><div class='bar-label'>第1-2单元</div><div class='bar-track'><div class='bar good' style='width:89.0%'></div></div><div class='bar-value'>89.0</div></div><div class='bar-row'><div class='bar-label'>第3单元</div><div class='bar-track'><div class='bar mid' style='width:81.6%'></div></div><div class='bar-value'>81.6</div></div><div class='bar-row'><div class='bar-label'>全册内容</div><div class='bar-track'><div class='bar mid' style='width:83.3%'></div></div><div class='bar-value'>83.3</div></div></div>
+        <p class="meta">相对薄弱项：第3单元均分81.6、及格率95.6%；第1单元均分82.8、及格率91.1%；全册内容均分83.3、及格率97.8%。</p>
+      </div>
+      <div class="card">
+        <h3>401班各测验均分</h3>
+        <div class='bars'><div class='bar-row'><div class='bar-label'>第1、2单元</div><div class='bar-track'><div class='bar mid' style='width:82.0%'></div></div><div class='bar-value'>82.0</div></div><div class='bar-row'><div class='bar-label'>第3单元</div><div class='bar-track'><div class='bar weak' style='width:70.3%'></div></div><div class='bar-value'>70.3</div></div><div class='bar-row'><div class='bar-label'>第4单元</div><div class='bar-track'><div class='bar mid' style='width:75.0%'></div></div><div class='bar-value'>75.0</div></div><div class='bar-row'><div class='bar-label'>期中</div><div class='bar-track'><div class='bar mid' style='width:75.9%'></div></div><div class='bar-value'>75.9</div></div><div class='bar-row'><div class='bar-label'>第5、6单元</div><div class='bar-track'><div class='bar mid' style='width:79.0%'></div></div><div class='bar-value'>79.0</div></div><div class='bar-row'><div class='bar-label'>17-18</div><div class='bar-track'><div class='bar weak' style='width:72.8%'></div></div><div class='bar-value'>72.8</div></div><div class='bar-row'><div class='bar-label'>23-24</div><div class='bar-track'><div class='bar mid' style='width:76.0%'></div></div><div class='bar-value'>76.0</div></div></div>
+        <p class="meta">相对薄弱项：第3单元均分70.3、及格率68.0%；17-18均分72.8、及格率68.0%；第4单元均分75.0、及格率78.0%。</p>
+      </div>
+    </div>
+    <h3>二01班统计明细</h3>
+    <table><thead><tr><th>测验/单元</th><th>人数</th><th>空缺</th><th>平均分</th><th>最高</th><th>最低</th><th>及格率</th><th>优秀率</th><th>90+</th><th>80-89</th><th>70-79</th><th>60-69</th><th>60以下</th></tr></thead><tbody><tr><td>时间</td><td>45</td><td>0</td><td><b>88.2</b></td><td>100</td><td>37</td><td>97.8%</td><td>77.8%</td><td>27</td><td>8</td><td>5</td><td>4</td><td class='danger'>1</td></tr><tr><td>第1单元</td><td>45</td><td>0</td><td><b>82.8</b></td><td>100</td><td>13</td><td>91.1%</td><td>77.8%</td><td>15</td><td>20</td><td>6</td><td>0</td><td class='danger'>4</td></tr><tr><td>第2单元</td><td>45</td><td>0</td><td><b>86.1</b></td><td>100</td><td>38</td><td>93.3%</td><td>77.8%</td><td>26</td><td>9</td><td>2</td><td>5</td><td class='danger'>3</td></tr><tr><td>第1-2单元</td><td>45</td><td>0</td><td><b>89.0</b></td><td>99</td><td>37</td><td>97.8%</td><td>91.1%</td><td>29</td><td>12</td><td>3</td><td>0</td><td class='danger'>1</td></tr><tr><td>第3单元</td><td>45</td><td>0</td><td><b>81.6</b></td><td>100</td><td>10</td><td>95.6%</td><td>66.7%</td><td>18</td><td>12</td><td>6</td><td>7</td><td class='danger'>2</td></tr><tr><td>全册内容</td><td>45</td><td>0</td><td><b>83.3</b></td><td>99</td><td>15</td><td>97.8%</td><td>73.3%</td><td>17</td><td>16</td><td>7</td><td>4</td><td class='danger'>1</td></tr></tbody></table>
+    <h3>401班统计明细</h3>
+    <table><thead><tr><th>测验/单元</th><th>人数</th><th>空缺</th><th>平均分</th><th>最高</th><th>最低</th><th>及格率</th><th>优秀率</th><th>90+</th><th>80-89</th><th>70-79</th><th>60-69</th><th>60以下</th></tr></thead><tbody><tr><td>第1、2单元</td><td>50</td><td>0</td><td><b>82.0</b></td><td>99</td><td>14</td><td>88.0%</td><td>68.0%</td><td>23</td><td>11</td><td>8</td><td>2</td><td class='danger'>6</td></tr><tr><td>第3单元</td><td>50</td><td>0</td><td><b>70.3</b></td><td>100</td><td>13</td><td>68.0%</td><td>42.0%</td><td>12</td><td>9</td><td>12</td><td>1</td><td class='danger'>16</td></tr><tr><td>第4单元</td><td>50</td><td>0</td><td><b>75.0</b></td><td>98</td><td>15</td><td>78.0%</td><td>56.0%</td><td>17</td><td>11</td><td>5</td><td>6</td><td class='danger'>11</td></tr><tr><td>期中</td><td>50</td><td>0</td><td><b>75.9</b></td><td>100</td><td>11</td><td>78.0%</td><td>60.0%</td><td>20</td><td>10</td><td>3</td><td>6</td><td class='danger'>11</td></tr><tr><td>第5、6单元</td><td>49</td><td>1</td><td><b>79.0</b></td><td>100</td><td>4</td><td>85.7%</td><td>67.3%</td><td>19</td><td>14</td><td>6</td><td>3</td><td class='danger'>7</td></tr><tr><td>17-18</td><td>50</td><td>0</td><td><b>72.8</b></td><td>99</td><td>9</td><td>68.0%</td><td>60.0%</td><td>16</td><td>14</td><td>3</td><td>1</td><td class='danger'>16</td></tr><tr><td>23-24</td><td>48</td><td>2</td><td><b>76.0</b></td><td>100</td><td>10</td><td>83.3%</td><td>58.3%</td><td>16</td><td>12</td><td>7</td><td>5</td><td class='danger'>8</td></tr></tbody></table>
+  </section>
+
+  <section class="section-band">
+    <h2>三、结合知识单元的教学判断</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班</h3>
+        <ul class="summary-list">
+          <li><b>“时间”单元均分88.2：</b>整体较好，但仍有1人未及格，说明时间单位换算、读写时间、经过时间类题目对个别学生仍是硬伤。</li>
+          <li><b>第1单元均分82.8、及格率91.1%：</b>这是二01班已测单元中及格率最低的一项，建议回看基础概念和基本方法是否有学生“会听不会做”。</li>
+          <li><b>第3单元均分81.6：</b>较第1-2单元综合下降7.4分，说明进入新知识后迁移能力有回落。课堂上可增加“同一知识点多题型变式”。</li>
+          <li><b>全册内容均分83.3：</b>综合保持稳定，说明复习阶段不是全面塌陷，而是需要把易错点整理成短周期滚动练习。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>401班</h3>
+        <ul class="summary-list">
+          <li><b>第3单元是明显低谷：</b>均分70.3、优秀率42.0%、待及格16人，是全表最需要复盘的单元。</li>
+          <li><b>第4单元与期中仍未完全恢复：</b>均分75.0、75.9，说明第3单元后形成的计算/概念漏洞进入综合检测后仍有延续。</li>
+          <li><b>第5、6单元回升：</b>均分79.0、及格率85.7%，说明经过阶段教学后主体学生能回到较正常水平，但优秀率仍不够稳定。</li>
+          <li><b>最新23-24检测均分76.0：</b>比17-18检测提升3.2分，说明近期复习有改善；但60分以下仍有8人，低分层没有自然消失。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">
+      <b>知识单元解读口径：</b>本报告以表内列名为准。若401班使用常见四年级下册顺序，第3单元多对应“运算规律/简便计算”类迁移题，第4单元多对应“小数意义与性质”类概念题，第5、6单元常进入“图形与小数计算”综合；实际复盘请以你们教材目录和试卷题目为准。
+    </div>
+  </section>
+
+  <section class="section-band">
+    <h2>四、学生分层画像</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班稳定高分学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>6</td><td>霍堡楠</td><td>98.8</td><td>96</td><td>0</td><td>6</td><td>96</td><td>100</td></tr><tr><td>39</td><td>叶雅楠</td><td>98.5</td><td>99</td><td>0</td><td>6</td><td>94</td><td>100</td></tr><tr><td>35</td><td>霍泳琳</td><td>97.2</td><td>93</td><td>0</td><td>6</td><td>93</td><td>100</td></tr><tr><td>23</td><td>许锐标</td><td>96.8</td><td>99</td><td>0</td><td>6</td><td>92</td><td>100</td></tr><tr><td>4</td><td>潘永涛</td><td>96.8</td><td>92</td><td>0</td><td>6</td><td>92</td><td>100</td></tr><tr><td>20</td><td>刘昂挺</td><td>95.5</td><td>93</td><td>0</td><td>6</td><td>90</td><td>100</td></tr><tr><td>2</td><td>霍晋航</td><td>93.3</td><td>94</td><td>0</td><td>4</td><td>88</td><td>97</td></tr><tr><td>37</td><td>韦开沛</td><td>93</td><td>97</td><td>0</td><td>4</td><td>89</td><td>99</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <h3>401班稳定高分学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>6</td><td>梁洛瑜</td><td>97</td><td>100</td><td>0</td><td>7</td><td>92</td><td>100</td></tr><tr><td>16</td><td>张允馨</td><td>97</td><td>95</td><td>0</td><td>7</td><td>95</td><td>98</td></tr><tr><td>34</td><td>梁逸培</td><td>96.1</td><td>94</td><td>0</td><td>7</td><td>90</td><td>100</td></tr><tr><td>35</td><td>林区域</td><td>95.6</td><td>98</td><td>0</td><td>7</td><td>90</td><td>99</td></tr><tr><td>4</td><td>李瑞晨</td><td>95.4</td><td>94</td><td>0</td><td>7</td><td>94</td><td>100</td></tr><tr><td>31</td><td>连允槿</td><td>95.1</td><td>96</td><td>0</td><td>7</td><td>90</td><td>98</td></tr><tr><td>13</td><td>徐安妮</td><td>94.9</td><td>96</td><td>0</td><td>7</td><td>90</td><td>99</td></tr><tr><td>26</td><td>霍庆坚</td><td>94.6</td><td>98</td><td>0</td><td>6</td><td>89</td><td>98</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班需重点跟进学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>45</td><td>谢润东</td><td>25</td><td>15</td><td>6</td><td>0</td><td>10</td><td>38</td></tr><tr><td>29</td><td>陈芷仪</td><td>65.5</td><td>60</td><td>2</td><td>0</td><td>47</td><td>84</td></tr><tr><td>40</td><td>霍晓虹</td><td>75.7</td><td>61</td><td>0</td><td>1</td><td>61</td><td>93</td></tr><tr><td>22</td><td>陈熹临</td><td>74.3</td><td>63</td><td>0</td><td>0</td><td>63</td><td>86</td></tr><tr><td>26</td><td>李思妍</td><td>82.3</td><td>69</td><td>0</td><td>2</td><td>69</td><td>91</td></tr><tr><td>43</td><td>彭梓宜</td><td>72.5</td><td>71</td><td>0</td><td>0</td><td>63</td><td>86</td></tr><tr><td>5</td><td>霍沛琛</td><td>76.8</td><td>72</td><td>0</td><td>2</td><td>67</td><td>92</td></tr><tr><td>15</td><td>梁敏华</td><td>77.8</td><td>74</td><td>0</td><td>1</td><td>68</td><td>90</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <h3>401班需重点跟进学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>9</td><td>石恩宁</td><td>12.6</td><td>10</td><td>7</td><td>0</td><td>4</td><td>24</td></tr><tr><td>38</td><td>巫子平</td><td>16</td><td>15</td><td>7</td><td>0</td><td>9</td><td>26</td></tr><tr><td>42</td><td>袁健恒</td><td>28.6</td><td>17</td><td>7</td><td>0</td><td>17</td><td>44</td></tr><tr><td>27</td><td>霍耀彬</td><td>28.9</td><td>20</td><td>7</td><td>0</td><td>14</td><td>57</td></tr><tr><td>33</td><td>梁茗钊</td><td>42.1</td><td>34</td><td>7</td><td>0</td><td>29</td><td>58</td></tr><tr><td>40</td><td>蔡梓豪</td><td>59.9</td><td>47</td><td>4</td><td>0</td><td>47</td><td>73</td></tr><tr><td>45</td><td>曾梓锋</td><td>61.3</td><td>56</td><td>4</td><td>0</td><td>56</td><td>77</td></tr><tr><td>32</td><td>梁宸</td><td>61.9</td><td>59</td><td>3</td><td>0</td><td>48</td><td>75</td></tr><tr><td>3</td><td>李梦瑶</td><td>64</td><td>64</td><td>4</td><td>0</td><td>54</td><td>83</td></tr><tr><td>15</td><td>张心愉</td><td>46</td><td>66</td><td>5</td><td>0</td><td>30</td><td>66</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班多次低分学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>45</td><td>谢润东</td><td>25</td><td>15</td><td>6</td><td>0</td><td>10</td><td>38</td></tr><tr><td>29</td><td>陈芷仪</td><td>65.5</td><td>60</td><td>2</td><td>0</td><td>47</td><td>84</td></tr><tr><td>24</td><td>张国裕</td><td>71.2</td><td>76</td><td>2</td><td>1</td><td>46</td><td>100</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <h3>401班多次低分学生</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>多次均分</th><th>最新</th><th>低分次数</th><th>90+次数</th><th>最低</th><th>最高</th></tr></thead><tbody><tr><td>9</td><td>石恩宁</td><td>12.6</td><td>10</td><td>7</td><td>0</td><td>4</td><td>24</td></tr><tr><td>38</td><td>巫子平</td><td>16</td><td>15</td><td>7</td><td>0</td><td>9</td><td>26</td></tr><tr><td>42</td><td>袁健恒</td><td>28.6</td><td>17</td><td>7</td><td>0</td><td>17</td><td>44</td></tr><tr><td>27</td><td>霍耀彬</td><td>28.9</td><td>20</td><td>7</td><td>0</td><td>14</td><td>57</td></tr><tr><td>33</td><td>梁茗钊</td><td>42.1</td><td>34</td><td>7</td><td>0</td><td>29</td><td>58</td></tr><tr><td>15</td><td>张心愉</td><td>46</td><td>66</td><td>5</td><td>0</td><td>30</td><td>66</td></tr><tr><td>40</td><td>蔡梓豪</td><td>59.9</td><td>47</td><td>4</td><td>0</td><td>47</td><td>73</td></tr><tr><td>50</td><td>叶小莉</td><td>60</td><td>66</td><td>4</td><td>0</td><td>50</td><td>78</td></tr><tr><td>45</td><td>曾梓锋</td><td>61.3</td><td>56</td><td>4</td><td>0</td><td>56</td><td>77</td></tr><tr><td>39</td><td>徐海荣</td><td>61.7</td><td>66</td><td>4</td><td>0</td><td>49</td><td>74</td></tr><tr><td>3</td><td>李梦瑶</td><td>64</td><td>64</td><td>4</td><td>0</td><td>54</td><td>83</td></tr><tr><td>21</td><td>杜思锐</td><td>58.9</td><td>71</td><td>3</td><td>0</td><td>29</td><td>76</td></tr><tr><td>10</td><td>石馨予</td><td>61.6</td><td>68</td><td>3</td><td>0</td><td>38</td><td>73</td></tr><tr><td>32</td><td>梁宸</td><td>61.9</td><td>59</td><td>3</td><td>0</td><td>48</td><td>75</td></tr><tr><td>5</td><td>李怡欣</td><td>64.9</td><td>70</td><td>2</td><td>0</td><td>47</td><td>87</td></tr><tr><td>22</td><td>甘俊涛</td><td>68.9</td><td>81</td><td>2</td><td>0</td><td>46</td><td>83</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-band">
+    <h2>五、进退步观察</h2>
+    <div class="grid two">
+      <div class="card">
+        <h3>二01班：从“时间”到“全册内容”进步较明显</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>起点</th><th>终点</th><th>变化</th></tr></thead><tbody><tr><td>11</td><td>梁森焱</td><td>67</td><td>92</td><td class='up'>+25</td></tr><tr><td>27</td><td>周诗韵</td><td>70</td><td>91</td><td class='up'>+21</td></tr><tr><td>17</td><td>邓志军</td><td>70</td><td>85</td><td class='up'>+15</td></tr><tr><td>1</td><td>梁星珀</td><td>64</td><td>77</td><td class='up'>+13</td></tr><tr><td>9</td><td>韩智宇</td><td>77</td><td>89</td><td class='up'>+12</td></tr><tr><td>7</td><td>梁皓希</td><td>79</td><td>90</td><td class='up'>+11</td></tr><tr><td>37</td><td>韦开沛</td><td>89</td><td>97</td><td class='up'>+8</td></tr><tr><td>43</td><td>彭梓宜</td><td>63</td><td>71</td><td class='up'>+8</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <h3>二01班：从“时间”到“全册内容”下降较明显</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>起点</th><th>终点</th><th>变化</th></tr></thead><tbody><tr><td>24</td><td>张国裕</td><td>100</td><td>76</td><td class='down'>-24</td></tr><tr><td>29</td><td>陈芷仪</td><td>84</td><td>60</td><td class='down'>-24</td></tr><tr><td>40</td><td>霍晓虹</td><td>85</td><td>61</td><td class='down'>-24</td></tr><tr><td>22</td><td>陈熹临</td><td>86</td><td>63</td><td class='down'>-23</td></tr><tr><td>26</td><td>李思妍</td><td>91</td><td>69</td><td class='down'>-22</td></tr><tr><td>45</td><td>谢润东</td><td>37</td><td>15</td><td class='down'>-22</td></tr><tr><td>5</td><td>霍沛琛</td><td>92</td><td>72</td><td class='down'>-20</td></tr><tr><td>44</td><td>肖梦汐</td><td>100</td><td>81</td><td class='down'>-19</td></tr></tbody></table>
+      </div>
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <h3>401班：从17-18到23-24进步较明显</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>起点</th><th>终点</th><th>变化</th></tr></thead><tbody><tr><td>21</td><td>杜思锐</td><td>29</td><td>71</td><td class='up'>+42</td></tr><tr><td>15</td><td>张心愉</td><td>30</td><td>66</td><td class='up'>+36</td></tr><tr><td>25</td><td>霍嘉琳</td><td>50</td><td>85</td><td class='up'>+35</td></tr><tr><td>10</td><td>石馨予</td><td>38</td><td>68</td><td class='up'>+30</td></tr><tr><td>50</td><td>叶小莉</td><td>51</td><td>66</td><td class='up'>+15</td></tr><tr><td>5</td><td>李怡欣</td><td>57</td><td>70</td><td class='up'>+13</td></tr><tr><td>29</td><td>李俊杰</td><td>79</td><td>88</td><td class='up'>+9</td></tr><tr><td>48</td><td>张心悦</td><td>79</td><td>88</td><td class='up'>+9</td></tr></tbody></table>
+      </div>
+      <div class="card">
+        <h3>401班：从17-18到23-24下降较明显</h3>
+        <table><thead><tr><th>学号</th><th>姓名</th><th>起点</th><th>终点</th><th>变化</th></tr></thead><tbody><tr><td>7</td><td>林漪霞</td><td>94</td><td>83</td><td class='down'>-11</td></tr><tr><td>19</td><td>陈志远</td><td>82</td><td>72</td><td class='down'>-10</td></tr><tr><td>44</td><td>周钰然</td><td>89</td><td>79</td><td class='down'>-10</td></tr><tr><td>1</td><td>邓静汶</td><td>88</td><td>80</td><td class='down'>-8</td></tr><tr><td>37</td><td>覃浩峰</td><td>99</td><td>91</td><td class='down'>-8</td></tr><tr><td>42</td><td>袁健恒</td><td>25</td><td>17</td><td class='down'>-8</td></tr><tr><td>40</td><td>蔡梓豪</td><td>52</td><td>47</td><td class='down'>-5</td></tr><tr><td>14</td><td>徐靖榕</td><td>87</td><td>83</td><td class='down'>-4</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-band">
+    <h2>六、后续教学与班主任跟进建议</h2>
+    <div class="grid three">
+      <div class="card">
+        <h3>1. 二01班：保优促稳</h3>
+        <ul>
+          <li>每天5-8分钟做“时间/基础方法”口算式快练，重在准确率。</li>
+          <li>对谢润东、张国裕、陈芷仪等学生做错题面批，先补最基础题型。</li>
+          <li>优秀生可安排讲题或小老师，但题目要有变式，避免只重复熟题。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2. 401班：先堵第3单元漏洞</h3>
+        <ul>
+          <li>第3单元均分最低，建议用一节课做“错因分类”：概念不清、计算失误、方法不会迁移。</li>
+          <li>23-24低分学生要建立短名单，每次只抓2-3个可达成目标，例如从30分段提到60分。</li>
+          <li>中段学生重点练审题和步骤规范，避免会做但失分。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3. 家校沟通口径</h3>
+        <ul>
+          <li>对二01家长：整体稳定，个别孩子需要补基础，先抓每天固定练习。</li>
+          <li>对401家长：近期有回升，但低分段仍明显，重点不是加量，而是把第3单元和近期错题真正订正会。</li>
+          <li>建议用“本周一个知识点+三道代表错题+一次反馈小测”的方式沟通，更具体，也更容易执行。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-band">
+    <h2>七、可直接采用的行动清单</h2>
+    <ol>
+      <li><b>本周先做401第3单元复盘：</b>按题型整理10道代表题，覆盖基础、变式、综合三类。</li>
+      <li><b>建立两类名单：</b>二01“个别补差名单”；401“60分以下和连续低分名单”。名单要短，目标要具体。</li>
+      <li><b>下次测后看三项：</b>均分是否回升、60分以下是否减少、80分以上是否扩大。只看均分会掩盖问题。</li>
+      <li><b>把反馈课改成闭环：</b>先讲共性错因，再让学生订正同类题，最后用5题小测检验是否真的会了。</li>
+    </ol>
+  </section>
+
+  <section class="section-band">
+    <h2>附：数据说明</h2>
+    <p>二01班纳入统计列：时间、第1单元、第2单元、第1-2单元、第3单元、全册内容。</p>
+    <p>401班纳入统计列：第1、2单元、第3单元、第4单元、期中、第5、6单元、17-18、23-24。</p>
+    <p class="muted">本报告只基于云文档前两个工作表中已填写的分数，未读取或修改其他工作表。</p>
+  </section>
+</main>
+</body>
+</html>
