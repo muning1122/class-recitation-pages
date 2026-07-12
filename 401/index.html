@@ -2885,103 +2885,46 @@
       return `recitation/${CLOUD_SYNC.classId}/state`;
     }
 
-    async function readResponseJson(response) {
-      const text = await response.text();
-      if (!response.ok) {
-        throw new Error(`${response.status} ${text.slice(0, 160)}`);
-      }
-      return text ? JSON.parse(text) : null;
-    }
-
-    async function createRestCloudApi() {
-      const config = CLOUD_SYNC.firebaseConfig;
-      let idToken = "";
-      let refreshToken = "";
-      let expiresAt = 0;
-
-      async function signIn() {
-        const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${encodeURIComponent(config.apiKey)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ returnSecureToken: true })
+    async function ensureTeacherSignIn(authMod, auth) {
+      await authMod.setPersistence(auth, authMod.browserLocalPersistence);
+      if (auth.currentUser) return auth.currentUser;
+      return new Promise((resolve, reject) => {
+        const overlay = document.createElement("div");
+        overlay.setAttribute("role", "dialog");
+        overlay.setAttribute("aria-label", "教师登录");
+        overlay.style.cssText = "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;background:#07142dcc;backdrop-filter:blur(8px)";
+        overlay.innerHTML = `<form style="width:min(390px,100%);display:grid;gap:12px;background:white;border-radius:20px;padding:30px;box-shadow:0 30px 90px #0007">
+          <strong style="font-size:22px;color:#1f3154">背书系统教师登录</strong>
+          <span style="font-size:12px;line-height:1.6;color:#78859a">只有带教师权限的Firebase账号可以读取和保存背书记录。</span>
+          <label style="display:grid;gap:5px;font-size:11px;color:#58667d">邮箱<input name="email" type="email" autocomplete="username" required style="border:1px solid #d9e2ef;border-radius:10px;padding:11px"></label>
+          <label style="display:grid;gap:5px;font-size:11px;color:#58667d">密码<input name="password" type="password" autocomplete="current-password" required style="border:1px solid #d9e2ef;border-radius:10px;padding:11px"></label>
+          <span data-error style="display:none;border-radius:8px;background:#fff0f2;color:#b43f4c;padding:8px;font-size:10px"></span>
+          <div style="display:flex;justify-content:flex-end;gap:8px"><button type="button" data-cancel style="border:0;border-radius:9px;padding:10px 14px;background:#edf1f6;color:#637087">仅本机使用</button><button type="submit" style="border:0;border-radius:9px;padding:10px 14px;background:#426de6;color:white;font-weight:700">登录并同步</button></div>
+        </form>`;
+        const form = overlay.querySelector("form");
+        const error = overlay.querySelector("[data-error]");
+        overlay.querySelector("[data-cancel]").addEventListener("click", () => {
+          overlay.remove();
+          reject(new Error("教师取消云端登录"));
         });
-        const data = await readResponseJson(response);
-        idToken = data.idToken;
-        refreshToken = data.refreshToken;
-        expiresAt = Date.now() + Math.max(Number(data.expiresIn || 3600) - 60, 60) * 1000;
-      }
-
-      async function refresh() {
-        if (!refreshToken) return signIn();
-        const body = new URLSearchParams({ grant_type: "refresh_token", refresh_token: refreshToken });
-        const response = await fetch(`https://securetoken.googleapis.com/v1/token?key=${encodeURIComponent(config.apiKey)}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=utf-8" },
-          body
+        form.addEventListener("submit", async event => {
+          event.preventDefault();
+          const email = form.elements.email.value.trim();
+          const password = form.elements.password.value;
+          try {
+            const credential = await authMod.signInWithEmailAndPassword(auth, email, password);
+            form.elements.password.value = "";
+            overlay.remove();
+            resolve(credential.user);
+          } catch (_error) {
+            form.elements.password.value = "";
+            error.textContent = "登录失败，请确认邮箱、密码和教师权限。";
+            error.style.display = "block";
+          }
         });
-        const data = await readResponseJson(response);
-        idToken = data.id_token;
-        refreshToken = data.refresh_token;
-        expiresAt = Date.now() + Math.max(Number(data.expires_in || 3600) - 60, 60) * 1000;
-      }
-
-      async function token() {
-        if (!idToken || Date.now() >= expiresAt) await refresh();
-        return idToken;
-      }
-
-      function url(authToken) {
-        return `${config.databaseURL}/${cloudStatePath()}.json?auth=${encodeURIComponent(authToken)}`;
-      }
-
-      async function get() {
-        const authToken = await token();
-        const response = await fetch(url(authToken), { method: "GET" });
-        return readResponseJson(response);
-      }
-
-      async function set(_ref, payload) {
-        let authToken = await token();
-        let response = await fetch(url(authToken), {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        if (response.status === 401) {
-          expiresAt = 0;
-          authToken = await token();
-          response = await fetch(url(authToken), {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-        }
-        return readResponseJson(response);
-      }
-
-      await signIn();
-      return { ref: null, set, get, mode: "rest" };
-    }
-
-    function createPublicCloudApi() {
-      const config = CLOUD_SYNC.firebaseConfig;
-      const url = `${config.databaseURL}/${cloudStatePath()}.json`;
-      return {
-        ref: null,
-        mode: "public-rest",
-        async get() {
-          const response = await fetch(url, { method: "GET" });
-          return readResponseJson(response);
-        },
-        async set(_ref, payload) {
-          const response = await fetch(url, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          return readResponseJson(response);
-        }
-      };
+        document.body.appendChild(overlay);
+        form.elements.email.focus();
+      });
     }
 
     function applyRemotePayload(remote, connectedMessage) {
@@ -3027,41 +2970,6 @@
       pullCloudNow("截止名单已刷新").then(() => renderDeadlineBoard());
     }
 
-    async function initRestCloudSync(reason) {
-      console.warn("using rest cloud sync fallback", reason);
-      setSyncMessage("connecting", "正在启用备用云同步");
-      const api = await createRestCloudApi();
-      state.cloudApi = api;
-      applyRemotePayload(await api.get(), "备用云同步已连接");
-      clearInterval(state.cloudPollTimer);
-      state.cloudPollTimer = setInterval(async () => {
-        if (state.syncingFromCloud || !state.cloudApi?.get) return;
-        try {
-          applyRemotePayload(await state.cloudApi.get(), "备用云同步已连接");
-        } catch (error) {
-          console.warn("rest cloud read failed", error);
-          setSyncMessage("offline", "备用云同步读取失败，本机继续可用");
-        }
-      }, 15000);
-    }
-
-    async function initPublicCloudSync() {
-      const api = createPublicCloudApi();
-      const remote = await api.get();
-      state.cloudApi = api;
-      applyRemotePayload(remote, "云端已连接");
-      clearInterval(state.cloudPollTimer);
-      state.cloudPollTimer = setInterval(async () => {
-        if (state.syncingFromCloud || !state.cloudApi?.get) return;
-        try {
-          applyRemotePayload(await state.cloudApi.get(), "云端已连接");
-        } catch (error) {
-          console.warn("public cloud read failed", error);
-          setSyncMessage("offline", "云端读取失败，本机继续可用");
-        }
-      }, 15000);
-    }
-
     function scheduleCloudSave() {
       if (!state.cloudApi || state.syncingFromCloud) return;
       clearTimeout(state.cloudSaveTimer);
@@ -3087,12 +2995,6 @@
       }
       try {
         setSyncMessage("connecting", "正在连接云端");
-        try {
-          await initPublicCloudSync();
-          return;
-        } catch (publicError) {
-          console.warn("public cloud init failed", publicError);
-        }
         const [appMod, dbMod, authMod] = await Promise.all([
           import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js"),
           import("https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js"),
@@ -3100,10 +3002,10 @@
         ]);
         const app = appMod.initializeApp(CLOUD_SYNC.firebaseConfig, `recitation-${CLOUD_SYNC.classId}`);
         const auth = authMod.getAuth(app);
-        await authMod.signInAnonymously(auth);
+        await ensureTeacherSignIn(authMod, auth);
         const db = dbMod.getDatabase(app);
         const dataRef = dbMod.ref(db, cloudStatePath());
-        state.cloudApi = { set: dbMod.set, ref: dataRef };
+        state.cloudApi = { set: dbMod.set, ref: dataRef, get: async () => (await dbMod.get(dataRef)).val() };
         dbMod.onValue(dataRef, snapshot => {
           applyRemotePayload(snapshot.val(), "云端已连接");
         }, error => {
@@ -3112,12 +3014,7 @@
         });
       } catch (error) {
         console.warn("cloud init failed", error);
-        try {
-          await initRestCloudSync(error);
-        } catch (fallbackError) {
-          console.warn("rest cloud init failed", fallbackError);
-          setSyncMessage("offline", "云端连接失败，本机继续可用");
-        }
+        setSyncMessage("offline", "教师未登录，当前仅保存在本机");
       }
     }
 
