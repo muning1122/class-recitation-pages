@@ -3000,7 +3000,17 @@
 
     async function ensureTeacherSignIn(authMod, auth) {
       await authMod.setPersistence(auth, authMod.browserLocalPersistence);
-      if (auth.currentUser) return auth.currentUser;
+      const requireTeacherClaim = async user => {
+        try {
+          const token = await authMod.getIdTokenResult(user, true);
+          if (token.claims.teacher === true) return user;
+        } catch (_error) {
+          // 令牌刷新失败与权限缺失都不得降级为可写会话。
+        }
+        await authMod.signOut(auth);
+        throw new Error("当前账号没有教师权限");
+      };
+      if (auth.currentUser) return requireTeacherClaim(auth.currentUser);
       return new Promise((resolve, reject) => {
         const overlay = document.createElement("div");
         overlay.setAttribute("role", "dialog");
@@ -3008,7 +3018,7 @@
         overlay.style.cssText = "position:fixed;inset:0;z-index:99999;display:grid;place-items:center;padding:20px;background:#07142dcc;backdrop-filter:blur(8px)";
         overlay.innerHTML = `<form style="width:min(390px,100%);display:grid;gap:12px;background:white;border-radius:20px;padding:30px;box-shadow:0 30px 90px #0007">
           <strong style="font-size:22px;color:#1f3154">背书系统教师登录</strong>
-          <span style="font-size:12px;line-height:1.6;color:#78859a">只有带教师权限的Firebase账号可以读取和保存背书记录。</span>
+          <span style="font-size:12px;line-height:1.6;color:#78859a">只有带教师权限的Firebase账号可以保存云端记录；取消后仅使用本机数据。</span>
           <label style="display:grid;gap:5px;font-size:11px;color:#58667d">邮箱<input name="email" type="email" autocomplete="username" required style="border:1px solid #d9e2ef;border-radius:10px;padding:11px"></label>
           <label style="display:grid;gap:5px;font-size:11px;color:#58667d">密码<input name="password" type="password" autocomplete="current-password" required style="border:1px solid #d9e2ef;border-radius:10px;padding:11px"></label>
           <span data-error style="display:none;border-radius:8px;background:#fff0f2;color:#b43f4c;padding:8px;font-size:10px"></span>
@@ -3026,9 +3036,10 @@
           const password = form.elements.password.value;
           try {
             const credential = await authMod.signInWithEmailAndPassword(auth, email, password);
+            const teacher = await requireTeacherClaim(credential.user);
             form.elements.password.value = "";
             overlay.remove();
-            resolve(credential.user);
+            resolve(teacher);
           } catch (_error) {
             form.elements.password.value = "";
             error.textContent = "登录失败，请确认邮箱、密码和教师权限。";
