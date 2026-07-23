@@ -1,0 +1,7 @@
+{
+  "name": "class-recitation-pages",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/security.test.mjs"
+  }
+}
