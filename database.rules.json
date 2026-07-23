@@ -2,8 +2,8 @@
   "rules": {
     "recitation": {
       "$classId": {
-        ".read": true,
-        ".write": "auth != null && auth.token.teacher === true"
+        ".read": "$classId === '201' || $classId === '401'",
+        ".write": "($classId === '201' || $classId === '401') && auth != null && auth.token.teacher === true"
       }
     },
     ".read": false,

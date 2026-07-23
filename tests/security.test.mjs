@@ -35,8 +35,8 @@ test("两页内联脚本语法有效", () => {
 
 test("数据库只公开读取背书路径，写入必须是教师", () => {
   const rules = JSON.parse(readFileSync("database.rules.json", "utf8"));
-  assert.equal(rules.rules.recitation.$classId[".read"], true);
-  assert.equal(rules.rules.recitation.$classId[".write"], "auth != null && auth.token.teacher === true");
+  assert.equal(rules.rules.recitation.$classId[".read"], "$classId === '201' || $classId === '401'");
+  assert.equal(rules.rules.recitation.$classId[".write"], "($classId === '201' || $classId === '401') && auth != null && auth.token.teacher === true");
   assert.equal(rules.rules[".read"], false);
   assert.equal(rules.rules[".write"], false);
 });
